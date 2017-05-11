@@ -3,7 +3,7 @@ CREATE TABLE users (
   username VARCHAR(128),
   password  VARCHAR(128),
   score int,
-  admin tinyint(1),
+  admin BOOL,
   created_at DATETIME,
   updated_at DATETIME
-)ENGINE=InnoDB;
+)ENGINE=InnoDB
