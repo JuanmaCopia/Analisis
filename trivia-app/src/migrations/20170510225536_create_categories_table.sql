@@ -1,3 +1,4 @@
 create table categories (
-category_name VARCHAR(20) NOT NULL primary key
+id INT(11) NOT NULL auto_increment PRIMARY KEY,
+category_name VARCHAR(20)
 )ENGINE=InnoDB;
