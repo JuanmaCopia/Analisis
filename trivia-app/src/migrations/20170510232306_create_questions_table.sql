@@ -6,7 +6,6 @@ option2 VARCHAR(35),
 option3 VARCHAR(35),
 option4 VARCHAR(35),
 category_id INT(11),
-user_id INT(11),
 created_at DATETIME,
 updated_at DATETIME
 )ENGINE=InnoDB;
