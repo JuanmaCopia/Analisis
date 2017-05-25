@@ -9,6 +9,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
+
+
+
+
+
 public class UserTest{
     @Before
     public void before(){
@@ -37,10 +42,44 @@ public class UserTest{
     // }
 
     @Test
-    public void validateUniquenessOfUsernames(){
+    public void validatePrecenseOfUsernamesAndPassword(){
         User user = new User();
-        user.set("username", "");
-
         assertEquals(user.isValid(), false);
+        user.set("username", "John");
+        assertEquals(user.isValid(), false);
+        user.set("password","john123");
+        assertEquals(user.isValid(), true);
+    }
+
+    @Test
+    public void validateUniquenessOfUsernames() {
+   
+    User u = new User();
+    u.set("username","john");
+    u.set("password","john123");
+    u.saveIt();
+
+    User u2 = new User();
+    u2.set("username","john");
+    u2.set("password","asd");
+    u2.save();
+
+    assertEquals(u2.isValid(),false);
+    assertEquals(u2.errors().get("username"), "This username is already taken.");
+
+	/* Ejemplo 
+	    @Test
+    	public void testUniquenessValidator(){
+        	deleteAndPopulateTables("users", "addresses");
+        	// create a new user
+        	new User().set("email", "john@doe.com").saveIt();
+        
+        	// attempt creating another user with the same email
+        	User u = new User();
+        	u.set("email", "john@doe.com").save();
+        	a(u).shouldNotBe("valid");
+        	a(u.errors().get("email")).shouldBeEqual("This email is already taken.");
+    	}
+	*/
     }
 }
