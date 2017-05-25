@@ -39,7 +39,7 @@ public class CategoryTest{
     @Test
     public void validateUniquenessOfCategoriesNames(){
         Category cat = new Category();
-        cat.set("category_name", "");
+        cat.set("name", "");
 
         assertEquals(cat.isValid(), false);
     }
