@@ -11,8 +11,29 @@ public class User extends Model {
     validateWith(new UniquenessValidator("username")).message("This username is already taken."); // validar que sea unico
   }
 
-  public String responder (Question q) {
-		return Question.getCorrectAwnser(q);
-  }  
+/*
+  public Game playGame(){
+  	int id = (Long)this.get("id");
+  	Game g = new Game(id);
+  	return g;
+  }*/
+
+  public String responderBien (Question q) {
+	return Question.getCorrectAnswer(q);
+  } 
+
+  public String responderMal(Question q){
+  	return Question.getWrongAnswer(q);
+  }
+
+  public void incrementScore(){
+  	this.set("rightAnswers",this.getInteger("rightAnswers")+1);
+	this.saveIt();
+  }
+
+  public void decrementScore(){
+  	this.set("wrongAnswers",this.getInteger("wrongAnswers")+1);
+	this.saveIt();
+  }
   
 }	

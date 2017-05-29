@@ -4,30 +4,37 @@ import org.javalite.activejdbc.Model;
 
 public class Game extends Model {
 	public Game(int user_id) {
-		int score = 0;
+		this.set("cantPreg",0);
+    	this.set("user_id",user_id);
+    	this.set("state","Game_In_Progress");
+    	this.saveIt();
 		User usuario = User.findById(user_id);
-
-		for (int i = 0;i < 1 ;i++) {
+		while((Integer)this.get("cantPreg")<2) {
 			// Busco pregunta aleatoria
-			Question q = Question.getRandomQuestion();
+			int quesId = Question.getRandomQuestion();
 			// Me fijo que categoria tiene y la muestro
-			//Integer category_id = q.getInteger("category_id");
-			Category c = Category.findById(1);
-			String nombreCategoria = c.getString("name");
-			System.out.println("Categoria: "+nombreCategoria);
+			Question q = Question.findById(quesId);
+			System.out.println("Categoria: "+ Category.getCategoryName(q));
 			// Le pregunto al usuario
-			String preg = q.getString("pregunta");
-			System.out.println(preg);
-			String respuesta = usuario.responder(q);
+			System.out.println(q.getPregunta());
+			String respuesta = usuario.responderBien(q);
+			//String respuesta = usuario.responderMal(q);
 			System.out.println("Respondio: "+respuesta);
 			if (Question.esCorrecta(q,respuesta)) {
 				System.out.println("La respuesta es correcta");
-				usuario.set("score",usuario.getInteger("score")+10);
-				usuario.saveIt();
+				usuario.incrementScore();
 			}
-			else 
+			else {
 				System.out.println("La respuesta es incorrecta");
+				usuario.decrementScore();
+			}
+			this.set("cantPreg",(Integer)this.get("cantPreg")+1);
+			this.saveIt();
 		}
+		if((Integer)this.get("cantPreg")>=2){
+        	this.set("state","Game_Over");
+    		this.saveIt();
+    	}
 
 	}
 
