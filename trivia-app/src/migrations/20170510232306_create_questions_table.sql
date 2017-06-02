@@ -5,7 +5,5 @@ option1 VARCHAR(35),
 option2 VARCHAR(35),
 option3 VARCHAR(35),
 correctOption VARCHAR(35),
-category_id INT(11),
-created_at DATETIME,
-updated_at DATETIME
+category_id INT(11)
 )ENGINE=InnoDB;
