@@ -12,6 +12,8 @@
     <activejdbc.version>1.4.13.j7</activejdbc.version>
     <environments>development.test,development</environments>
     <project.basedir>../trivia-app</project.basedir>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <build>
@@ -100,6 +102,16 @@
         <artifactId>activejdbc</artifactId>
         <version>${activejdbc.version}</version>
     </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/commons-validator/commons-validator -->
+	<dependency>
+    	<groupId>commons-validator</groupId>
+    	<artifactId>commons-validator</artifactId>
+    	<version>1.4.0</version>
+	</dependency>
+
+
 
 
     <dependency>
