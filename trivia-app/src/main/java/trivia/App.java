@@ -17,26 +17,47 @@ public class App {
 
     public static void main( String[] args ) {
 
-    staticFileLocation("/public");
 
 
    
     get("/", (request, response) -> {
         Map<String, Object> model = new HashMap<>();
-        return new ModelAndView(model, "./src/main/resources/templates/ppal.mustache"); 
+        return new ModelAndView(model, "./views/index.mustache"); 
     }, new MustacheTemplateEngine());
 
-    post("/registrarse", (req,res) -> {
+    get("/users", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        List<User> lista = User.findAll();
+        Map model = new HashMap();
+        lista.get(0); // eliminar
+        model.put("users",lista);
+        Base.close(); 
+        return new ModelAndView(model, "./views/users.mustache");
+    }, new MustacheTemplateEngine());
+
+
+
+
+    get("/sing_up", (req,res) -> {
       Map<String, Object> model = new HashMap();
-      return new ModelAndView(model, "./src/main/resources/templates/registro.mustache");
+      return new ModelAndView(model, "./views/sing_up.mustache");
     },new MustacheTemplateEngine());
 
-    post("/ingresar", (req,res) -> {
+    get("/sing_in", (req,res) -> {
       Map<String, Object> model = new HashMap();
-      return new ModelAndView(model, "./src/main/resources/templates/ingreso.mustache");
+      return new ModelAndView(model, "./views/sing_in.mustache");
     },new MustacheTemplateEngine());
 
+    post("/sing_up_success", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
 
+        Map model = new HashMap();
+        model.put("username",request.queryParams("username"));
+        model.put("password",request.queryParams("password"));
+
+        Base.close(); 
+        return new ModelAndView(model, "./views/sing_up_success.mustache");
+    }, new MustacheTemplateEngine());
 
 
 

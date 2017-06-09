@@ -18,6 +18,10 @@ public class User extends Model {
   	return g;
   }*/
 
+  public String username () {
+    return (String) this.get("username");
+  }
+
   public String responderBien (Question q) {
 	return Question.getCorrectAnswer(q);
   } 
