@@ -38,17 +38,17 @@ public class App {
 
 
 
-    get("/sing_up", (req,res) -> {
+    get("/sign_up", (req,res) -> {
       Map<String, Object> model = new HashMap();
-      return new ModelAndView(model, "./views/sing_up.mustache");
+      return new ModelAndView(model, "./views/sign_up.mustache");
     },new MustacheTemplateEngine());
 
-    get("/sing_in", (req,res) -> {
+    get("/sign_in", (req,res) -> {
       Map<String, Object> model = new HashMap();
-      return new ModelAndView(model, "./views/sing_in.mustache");
+      return new ModelAndView(model, "./views/sign_in.mustache");
     },new MustacheTemplateEngine());
 
-    post("/sing_up_success", (request, response) -> {
+    post("/sign_up_success", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
 
         Map model = new HashMap();
@@ -56,7 +56,7 @@ public class App {
         model.put("password",request.queryParams("password"));
 
         Base.close(); 
-        return new ModelAndView(model, "./views/sing_up_success.mustache");
+        return new ModelAndView(model, "./views/sign_up_success.mustache");
     }, new MustacheTemplateEngine());
 
 
