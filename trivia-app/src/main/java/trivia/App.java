@@ -17,7 +17,7 @@ public class App {
 
     public static void main( String[] args ) {
 
-
+    staticFileLocation("/public");
 
    
     get("/", (request, response) -> {
@@ -60,6 +60,29 @@ public class App {
     }, new MustacheTemplateEngine());
 
 
+    post("/game", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        request.session(true);                     // create and return session
+        String userN = request.queryParams("username");
+        List<User> p = User.where("username = '" + userN + "'");
+        request.session().attribute("user",p.get(0).getInteger("id")); // Set session attribute 'user'
+        Map model = new HashMap();
+        Base.close();
+        return new ModelAndView(model, "./views/game.mustache");
+    }, new MustacheTemplateEngine());
+
+
+
+    post("/playNewGame", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Map model = new HashMap();
+
+        Base.close(); 
+        return new ModelAndView(model, "./views/playNewGame.mustache");
+    }, new MustacheTemplateEngine());
+
+
+
 
     /*
 	Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
@@ -83,6 +106,12 @@ public class App {
       Base.close();
 	*/
 
+      /*
+      request.session(true);                     // create and return session
+request.session().attribute("user");       // Get session attribute 'user'
+request.session().attribute("user","foo"); // Set session attribute 'user'
+request.session().removeAttribute("user");
+*/
 
     }
 }
