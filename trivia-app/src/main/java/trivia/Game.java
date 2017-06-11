@@ -29,6 +29,45 @@ public class Game extends Model {
 		return this.getInteger("wrongAnswers");
 	}
 
+
+	public static void answerQuestion(int question_id, int user_id,int game_id, int option) {
+		String userAnswer,correctAnswer;
+		Question q = Question.findById(question_id);
+		switch option {
+			case 1:
+				userAnswer = q.getString("option1");
+				break;
+			case 2:
+				userAnswer = q.getString("option2");
+				break;
+			case 3:
+				userAnswer = q.getString("option3");
+				break;
+			case 4:
+				userAnswer = q.getString("option4");
+				break;
+			default:
+				userAnswer = "asdsadasd";
+				break;
+		}
+		correctAnswer = q.getString("correctOption");
+
+		Game g = Game.findById(game_id);
+		User u = User.findById(user_id);
+		if (userAnswer == correctAnswer) {
+			u.increaseScore();
+			g.set("rightAnswers",g.getInteger("rightAnswers") + 1); // rightAnswers 
+			g.saveIt();
+		}
+		else {
+			u.decreaseScore();
+			g.set("wrongAnswers",g.getInteger("wrongAnswers") + 1); // wrongAnswers
+			g.saveIt();
+		}
+
+	}
+
+
 /*
 public Game(int user_id) {
 		this.set("cantPreg",0);
