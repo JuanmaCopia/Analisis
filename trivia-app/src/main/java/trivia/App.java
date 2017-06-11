@@ -71,11 +71,19 @@ public class App {
         return new ModelAndView(model, "./views/game.mustache");
     }, new MustacheTemplateEngine());
 
+    post("/game2", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Map model = new HashMap();
+        Base.close();
+        return new ModelAndView(model, "./views/game2.mustache");
+    }, new MustacheTemplateEngine());
+
     post("/playNewGameBeginning", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
         // inicializo juego
-        Game g = new Game(request.session().attribute("user"));
+        Game g = new Game();
+        g.setBeginning(request.session().attribute("user_id"));
         request.session().attribute("game_id",g.getInteger("id"));
         // Busco pregunta aleatoria
         Question q = Question.findById(Question.getRandomQuestion());
@@ -98,16 +106,16 @@ public class App {
         Integer userId = request.session().attribute("user_id");
         Integer quesId = request.session().attribute("question_id");
         Integer gameId = request.session().attribute("game_id");
-        answerQuestion(quesId,userId,gameId,ansNum);
+        Game.answerQuestion(quesId,userId,gameId,ansNum);
         Game g = Game.findById(gameId);
-        if (g.getNumberQuestion()=5){
+        if (g.getNumberQuestion()==5){
           model.put("rightAnswers", g.getRightAnswers());
           model.put("wrongAnswers", g.getWrongAnswers());
           Base.close(); 
           return new ModelAndView(model, "./views/playNewGameEnd.mustache");
         }
         //Aumento contador de pregunta
-        g.incrementNumberQuestion();
+        g.increaseNumberQuestion();
         // Busco otra pregunta aleatoria
         Question q = Question.findById(Question.getRandomQuestion());
         request.session().attribute("question_id",q.getInteger("id"));
