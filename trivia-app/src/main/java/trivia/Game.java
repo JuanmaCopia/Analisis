@@ -7,7 +7,26 @@ public class Game extends Model {
 		this.set("cantPreg",0);
     	this.set("user_id",user_id);
     	this.set("state","Game_In_Progress");
+    	this.set("rightAnswers", 0);
+    	this.set("wrongAnswers", 0);
     	this.saveIt();
+	}
+
+	public void increaseNumberQuestion(){
+		this.set("cantPreg",(Integer)this.get("cantPreg")+1);
+        this.saveIt();
+	}
+
+	public Integer getNumberQuestion(){
+		return (Integer)this.get("cantPreg");
+	}
+
+	public Integer getRightAnswers(){
+		return this.getInteger("rightAnswers");
+	}
+
+	public Integer getWrongAnswers(){
+		return this.getInteger("wrongAnswers");
 	}
 
 /*

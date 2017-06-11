@@ -65,40 +65,73 @@ public class App {
         request.session(true);                     // create and return session
         String userN = request.queryParams("username");
         List<User> p = User.where("username = '" + userN + "'");
-        request.session().attribute("user",p.get(0).getInteger("id")); // Set session attribute 'user'
+        request.session().attribute("user_id",p.get(0).getInteger("id")); // Set session attribute 'user'
         Map model = new HashMap();
         Base.close();
         return new ModelAndView(model, "./views/game.mustache");
     }, new MustacheTemplateEngine());
 
-
-
-    post("/playNewGame", (request, response) -> {
+    post("/playNewGameBeginning", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
-        //////////////////////////////////////////////////////// Juego
-        int user_id = request.session().attribute("user");
-        User u = User.findById(user_id);
         // inicializo juego
-        Game g = new Game(user_id);
+        Game g = new Game(request.session().attribute("user"));
+        request.session().attribute("game_id",g.getInteger("id"));
         // Busco pregunta aleatoria
         Question q = Question.findById(Question.getRandomQuestion());
-
+        request.session().attribute("question_id",q.getInteger("id"));
         model.put("category_name", Category.getCategoryName(q));
         model.put("question_name",q.getString("pregunta"));
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));
         model.put("option3",q.getString("option3"));
         model.put("option4",q.getString("option4"));
-
-      
-        //////////////////////////////////////////////////////////////////
-
         Base.close(); 
-        return new ModelAndView(model, "./views/playNewGame.mustache");
+        return new ModelAndView(model, "./views/playNewGameBeginning.mustache");
     }, new MustacheTemplateEngine());
 
+    post("/playNewGameMiddle", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Map model = new HashMap();
+        //Asigno puntaje
+        Integer ansNum = Integer.parseInt(request.queryParams("answerNumber"));
+        Integer userId = request.session().attribute("user_id");
+        Integer quesId = request.session().attribute("question_id");
+        Integer gameId = request.session().attribute("game_id");
+        answerQuestion(quesId,userId,gameId,ansNum);
+        Game g = Game.findById(gameId);
+        if (g.getNumberQuestion()=5){
+          model.put("rightAnswers", g.getRightAnswers());
+          model.put("wrongAnswers", g.getWrongAnswers());
+          Base.close(); 
+          return new ModelAndView(model, "./views/playNewGameEnd.mustache");
+        }
+        //Aumento contador de pregunta
+        g.incrementNumberQuestion();
+        // Busco otra pregunta aleatoria
+        Question q = Question.findById(Question.getRandomQuestion());
+        request.session().attribute("question_id",q.getInteger("id"));
+        model.put("category_name", Category.getCategoryName(q));
+        model.put("question_name",q.getString("pregunta"));
+        model.put("option1",q.getString("option1"));
+        model.put("option2",q.getString("option2"));
+        model.put("option3",q.getString("option3"));
+        model.put("option4",q.getString("option4"));
+        Base.close(); 
+        return new ModelAndView(model, "./views/playNewGameMiddle.mustache");
+    }, new MustacheTemplateEngine());
+/*
+    post("/playNewGameEnd", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Map model = new HashMap();
+        Game g = Game.findById(request.session().attribute("game_id"));
+        model.put("rightAnswers", g.getRightAnswers());
+        model.put("wrongAnswers", g.getWrongAnswers());
+        Base.close(); 
+        return new ModelAndView(model, "./views/playNewGameEnd.mustache");
+    }, new MustacheTemplateEngine());
 
+*/
 
 
     /*

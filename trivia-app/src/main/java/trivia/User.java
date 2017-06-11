@@ -18,24 +18,31 @@ public class User extends Model {
   	return g;
   }*/
 
+
+
   public String username () {
     return (String) this.get("username");
   }
 
+  public Integer getId(){
+    return this.getInteger("id");
+  }
+
+/*
   public String responderBien (Question q) {
 	return Question.getCorrectAnswer(q);
   } 
 
   public String responderMal(Question q){
   	return Question.getWrongAnswer(q);
-  }
+  }*/
 
-  public void incrementScore(){
+  public void increaseScore(){
   	this.set("rightAnswers",this.getInteger("rightAnswers")+1);
 	this.saveIt();
   }
 
-  public void decrementScore(){
+  public void decreaseScore(){
   	this.set("wrongAnswers",this.getInteger("wrongAnswers")+1);
 	this.saveIt();
   }

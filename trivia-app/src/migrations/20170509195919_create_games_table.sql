@@ -3,6 +3,8 @@ CREATE TABLE games (
   user_id INT(11),
   cantPreg INT(11),
   state enum('Game_Over','Game_In_Progress'),
+  rightAnswers INT,
+  wrongAnswers INT,
   created_at DATETIME,
   updated_at DATETIME
 )ENGINE=InnoDB;
