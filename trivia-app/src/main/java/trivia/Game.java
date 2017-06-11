@@ -8,6 +8,14 @@ public class Game extends Model {
     	this.set("user_id",user_id);
     	this.set("state","Game_In_Progress");
     	this.saveIt();
+	}
+
+/*
+public Game(int user_id) {
+		this.set("cantPreg",0);
+    	this.set("user_id",user_id);
+    	this.set("state","Game_In_Progress");
+    	this.saveIt();
 		User usuario = User.findById(user_id);
 		while((Integer)this.get("cantPreg")<2) {
 			// Busco pregunta aleatoria
@@ -37,5 +45,6 @@ public class Game extends Model {
     	}
 
 	}
+*/
 
 }

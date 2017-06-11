@@ -28,4 +28,6 @@ public class Question extends Model {
  	public static boolean esCorrecta(Question q, String resp) {
 		return (resp == q.getCorrectAnswer(q));
 	}
+
+
 }
