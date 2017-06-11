@@ -77,14 +77,14 @@ public class App {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
         //////////////////////////////////////////////////////// Juego
-        int user_id = request.session.attribute("user");
+        int user_id = request.session().attribute("user");
         User u = User.findById(user_id);
         // inicializo juego
         Game g = new Game(user_id);
         // Busco pregunta aleatoria
         Question q = Question.findById(Question.getRandomQuestion());
 
-        model.put("category_name",getCategoryName(q));
+        model.put("category_name", Category.getCategoryName(q));
         model.put("question_name",q.getString("pregunta"));
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));
