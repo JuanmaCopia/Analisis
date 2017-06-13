@@ -29,8 +29,8 @@ public class Question extends Model {
 		return (resp == q.getCorrectAnswer(q));
 	}*/
 
-  public static String getCategoryName(Question q){
-    int category_id = q.getInteger("category_id");
+  public String getCategoryName(){
+    int category_id = this.getInteger("category_id");
     Category c = Category.findById(category_id);
     return c.getString("name");
   }

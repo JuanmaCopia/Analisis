@@ -57,7 +57,7 @@ public class App {
         }
         String password = request.queryParams("password");
         String passwordRep = request.queryParams("passwordRep");
-        if (password!=passwordRep){
+        if (!password.equals(passwordRep)){
             model.put("error", "Las contraseñas ingresadas no coinciden.");
             Base.close(); 
             return new ModelAndView(model, "./views/sign_up.mustache");
@@ -73,17 +73,29 @@ public class App {
         u.setSignUpData(username, password, email);
         model.put("username",request.queryParams("username"));
         Base.close(); 
-        return new ModelAndView(model, "./views/sign_up_chek.mustache");
+        return new ModelAndView(model, "./views/sign_up_check.mustache");
     }, new MustacheTemplateEngine());
 
 
     post("/game", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        request.session(true);                     // create and return session
-        String userN = request.queryParams("username");
-        List<User> p = User.where("username = '" + userN + "'");
-        request.session().attribute("user_id",p.get(0).getInteger("id")); // Set session attribute 'user'
         Map model = new HashMap();
+
+        String username = request.queryParams("username");
+        String password = request.queryParams("password");
+
+        // Chequeo de datos
+        List<User> l = User.where("username = ? and password = ?",username,password);
+        if (l.isEmpty()) {
+        	model.put("error","Invalid username or password");
+        	Base.close();
+        	return new ModelAndView(model,"./views/sign_in.mustache");
+        }
+
+        /// Creacion de sesion
+        request.session(true);                     // create and return session
+        request.session().attribute("user_id",l.get(0).getInteger("id")); // Set session attribute 'user'
+
         Base.close();
         return new ModelAndView(model, "./views/game.mustache");
     }, new MustacheTemplateEngine());
@@ -105,7 +117,7 @@ public class App {
         // Busco pregunta aleatoria
         Question q = Question.findById(Question.getRandomQuestion());
         request.session().attribute("question_id",q.getInteger("id"));
-        model.put("category_name", Question.getCategoryName(q));
+        model.put("category_name", q.getCategoryName());
         model.put("question_name",q.getString("pregunta"));
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));
@@ -119,11 +131,17 @@ public class App {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
         //Asigno puntaje
-        Integer ansNum = Integer.parseInt(request.queryParams("answerNumber"));
-        Integer userId = request.session().attribute("user_id");
-        Integer quesId = request.session().attribute("question_id");
-        Integer gameId = request.session().attribute("game_id");
+        int ansNum = Integer.parseInt(request.queryParams("answerNumber"));
+        int userId = request.session().attribute("user_id");
+        int quesId = request.session().attribute("question_id");
+        int gameId = request.session().attribute("game_id");
         Game.answerQuestion(quesId,userId,gameId,ansNum);
+        // guardo pregunta en games questions
+        GamesQuestions gq = new GamesQuestions();
+        gq.set("game_id",gameId);
+        gq.set("question_id",quesId);
+        gq.saveIt();
+        ///
         Game g = Game.findById(gameId);
         if (g.getNumberQuestion()==5){
           model.put("rightAnswers", g.getRightAnswers());
@@ -134,9 +152,18 @@ public class App {
         //Aumento contador de pregunta
         g.increaseNumberQuestion();
         // Busco otra pregunta aleatoria
-        Question q = Question.findById(Question.getRandomQuestion());
-        request.session().attribute("question_id",q.getInteger("id"));
-        model.put("category_name", Question.getCategoryName(q));
+        int questionId = Question.getRandomQuestion();
+        // cheequeo que no haya sido preguntada
+        List<GamesQuestions> l = GamesQuestions.where("question_id = ? and game_id = ?",questionId,gameId);
+        if (!l.isEmpty()) {
+        	questionId = Question.getRandomQuestion();
+        }
+
+      
+        Question q = Question.findById(questionId);
+
+        request.session().attribute("question_id",questionId); // set questid
+        model.put("category_name", q.getCategoryName());
         model.put("question_name",q.getString("pregunta"));
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));
