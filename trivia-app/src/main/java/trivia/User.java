@@ -37,14 +37,23 @@ public class User extends Model {
   	return Question.getWrongAnswer(q);
   }*/
 
+  public void setSignUpData(String username, String password, String email){
+    this.set("username",username);
+    this.set("password",password);
+    this.set("email",email);
+    this.set("rightAnswers",0);
+    this.set("wrongAnswers",0);
+    this.saveIt();
+  }
+
   public void increaseScore(){
   	this.set("rightAnswers",this.getInteger("rightAnswers")+1);
-	this.saveIt();
+	  this.saveIt();
   }
 
   public void decreaseScore(){
   	this.set("wrongAnswers",this.getInteger("wrongAnswers")+1);
-	this.saveIt();
+	  this.saveIt();
   }
   
 }	

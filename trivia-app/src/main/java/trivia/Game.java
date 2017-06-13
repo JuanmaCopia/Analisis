@@ -64,7 +64,7 @@ public Game(int user_id) {
 			int quesId = Question.getRandomQuestion();
 			// Me fijo que categoria tiene y la muestro
 			Question q = Question.findById(quesId);
-			System.out.println("Categoria: "+ Category.getCategoryName(q));
+			System.out.println("Categoria: "+ Question.getCategoryName(q));
 			// Le pregunto al usuario
 			System.out.println(q.getPregunta());
 			String respuesta = usuario.responderBien(q);

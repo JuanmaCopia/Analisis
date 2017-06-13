@@ -35,9 +35,6 @@ public class App {
         return new ModelAndView(model, "./views/users.mustache");
     }, new MustacheTemplateEngine());
 
-
-
-
     get("/sign_up", (req,res) -> {
       Map<String, Object> model = new HashMap();
       return new ModelAndView(model, "./views/sign_up.mustache");
@@ -48,15 +45,35 @@ public class App {
       return new ModelAndView(model, "./views/sign_in.mustache");
     },new MustacheTemplateEngine());
 
-    post("/sign_up_success", (request, response) -> {
+    post("/sign_up_check", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-
         Map model = new HashMap();
+        String username = request.queryParams("username");
+        List<User> p = User.where("username = '" + username + "'");
+        if (p.size()!=0){
+            model.put("error", "El usuario " + username + " ya existe.");
+            Base.close(); 
+            return new ModelAndView(model, "./views/sign_up.mustache");
+        }
+        String password = request.queryParams("password");
+        String passwordRep = request.queryParams("passwordRep");
+        if (password!=passwordRep){
+            model.put("error", "Las contraseñas ingresadas no coinciden.");
+            Base.close(); 
+            return new ModelAndView(model, "./views/sign_up.mustache");
+        }
+        String email = request.queryParams("email");
+        p = User.where("email = '" + email + "'");
+        if (p.size()!=0){
+            model.put("error", "Ya existe un usuario registrado con este e-mail.");
+            Base.close(); 
+            return new ModelAndView(model, "./views/sign_up.mustache");
+        }
+        User u = new User();
+        u.setSignUpData(username, password, email);
         model.put("username",request.queryParams("username"));
-        model.put("password",request.queryParams("password"));
-
         Base.close(); 
-        return new ModelAndView(model, "./views/sign_up_success.mustache");
+        return new ModelAndView(model, "./views/sign_up_chek.mustache");
     }, new MustacheTemplateEngine());
 
 
@@ -88,7 +105,7 @@ public class App {
         // Busco pregunta aleatoria
         Question q = Question.findById(Question.getRandomQuestion());
         request.session().attribute("question_id",q.getInteger("id"));
-        model.put("category_name", Category.getCategoryName(q));
+        model.put("category_name", Question.getCategoryName(q));
         model.put("question_name",q.getString("pregunta"));
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));
@@ -119,7 +136,7 @@ public class App {
         // Busco otra pregunta aleatoria
         Question q = Question.findById(Question.getRandomQuestion());
         request.session().attribute("question_id",q.getInteger("id"));
-        model.put("category_name", Category.getCategoryName(q));
+        model.put("category_name", Question.getCategoryName(q));
         model.put("question_name",q.getString("pregunta"));
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));

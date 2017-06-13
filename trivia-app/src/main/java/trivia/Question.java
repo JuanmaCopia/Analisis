@@ -19,7 +19,7 @@ public class Question extends Model {
     String resp = q.getString("option1");
     return resp;
   }
-
+/*
   public static String getCorrectAnswer(Question q) {
 	  String resp = q.getString("correctOption");
 	  return resp;
@@ -27,7 +27,11 @@ public class Question extends Model {
 
  	public static boolean esCorrecta(Question q, String resp) {
 		return (resp == q.getCorrectAnswer(q));
-	}
+	}*/
 
-
+  public static String getCategoryName(Question q){
+    int category_id = q.getInteger("category_id");
+    Category c = Category.findById(category_id);
+    return c.getString("name");
+  }
 }
