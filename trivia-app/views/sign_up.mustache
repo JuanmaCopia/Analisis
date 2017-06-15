@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+    <title>Pregunta2 registro</title>
+    <link rel='stylesheet' href='/css/signup.css'>
+</head
+
 <body>
 
-<form method="post" action="/sign_up_check">
+<img src="/images/corona.png">
 
-    <p>Username: </p> 
-    <input type="text" name="username">
+<div class="box">
+    <form method="post" action="/sign_up_check">
 
-    <br>
+        <p>Usuario: </p> 
+        <input type="text" name="username"  autocomplete="off" placeholder="Nombre de usuario" required>
 
-    <p>Password: </p> 
-    <input type="text" name="password">
+        <br>
 
-    <br>
+        <p>Contraseña: </p> 
+        <input type="password" name="password" placeholder="Contraseña" required>
 
-    <p>Confirm password: </p> 
-    <input type="text" name="passwordRep">
+        <br>
 
-    <br>
+        <p>Repetir contraseña: </p> 
+        <input type="password" name="passwordRep" placeholder="Contraseña" required>
 
-    <p>Email: </p>
-    <input type="text" name="email">
+        <br>
+
+        <p>Email: </p>
+        <input type="email" name="email" autocomplete="off" placeholder="email@example.com" required>
   
-    <br>
-    <p>{{error}}</p>
-    <br>
-    <input type="submit" value="Create an account">
+        <br>
+        <p class="er">{{error}}</p>
+        <br>
+        <input type="submit" value="Crear cuenta">
 
-</form> 
-
+    </form> 
+<div>
 
 
 

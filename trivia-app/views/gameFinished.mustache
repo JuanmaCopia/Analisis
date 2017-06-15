@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Fin -Pregunta2</title>
+	<link rel='stylesheet' href='/css/gameFinished.css'>
+</head>
+
+<body>
+
+	<div class="header">
+		<h1>Felicitaciones!</h1>
+	</div>
+
+	<div class="statistics">
+		<p>Respuestas Correctas: <span id="correct"> {{rightAnswers}} </span> </p> 
+		<p>Respuestas Incorrectas: <span id="incorrect"> {{wrongAnswers}} </span> </p>
+	</div>
+
+	<div class="form">
+		<form method="post" action="/game2">
+			   <input type="submit" value="Aceptar"/>
+		</form>
+		<form method="post" action="/gameStart">
+			   <input type="submit" value="Jugar nuevamente"/>
+		</form>
+	</div>
+
+</body>

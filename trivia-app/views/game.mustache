@@ -1,18 +1,34 @@
+
+
 <!DOCTYPE html>
 <html>
 
 <head>
-	<title>Pregunta2</title>
-</head>
+    <title>Juego - Pregunta2</title>
+    <link rel='stylesheet' href='/css/game.css'>
+</head
 
 <body>
 
-<h1>PREGUNTA2</h1>
+<div id="imgbox2">
+    	<img src="./images/2.png">
+    </div>
 
-<form action="/playNewGameBeginning" method="post">
-	<input type="submit" value="Jugar">
-</form>
+<div class="container">
+
+	<div class="box">
+	    <form action="/gameStart" method="post">
+			<input type="submit" value="Jugar">
+		</form>
+		<form action="/ranking" method="get">
+			<input type="submit" value="Ver Ranking">
+		</form>
+		<form action="/logOut" method="post">
+			<input type="submit" value="Salir">
+		</form>
+	<div>
+
+</div>
 
 </body>
-
 </html>

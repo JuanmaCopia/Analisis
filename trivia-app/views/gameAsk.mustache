@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Game - Pregunta2</title>
+	<link rel='stylesheet' href='/css/questions.css'>
+</head>
+
+<body>
+
+
+<div class="container">
+
+
+	<div class="quest">
+		<div class="q2">
+			<p id="category">Categoria: <span>{{category_name}}</span></p>
+			<p id="question">{{question_name}}</h1>
+		<div>
+	</div>
+	
+	<div class="form">
+		
+		<form method="post" action="/answer?user_answer=1">
+			<input type="submit" value="{{option1}}">
+		</form>
+
+		<form method="post" action="/answer?user_answer=2">
+			<input type="submit" value="{{option2}}">
+		</form>
+
+		<form method="post" action="/answer?user_answer=3">
+			<input type="submit" value="{{option3}}">
+		</form>
+
+		<form method="post" action="/answer?user_answer=4">
+			<input type="submit" value="{{option4}}">
+		</form>
+
+	</div>
+</div>
+
+</body>
+
+</html>

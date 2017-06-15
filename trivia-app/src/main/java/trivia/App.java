@@ -104,10 +104,10 @@ public class App {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
         Base.close();
-        return new ModelAndView(model, "./views/game2.mustache");
+        return new ModelAndView(model, "./views/game.mustache");
     }, new MustacheTemplateEngine());
 
-    post("/playNewGameBeginning", (request, response) -> {
+    post("/gameStart", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
         // inicializo juego
@@ -124,14 +124,14 @@ public class App {
         model.put("option3",q.getString("option3"));
         model.put("option4",q.getString("option4"));
         Base.close(); 
-        return new ModelAndView(model, "./views/playNewGameBeginning.mustache");
+        return new ModelAndView(model, "./views/gameAsk.mustache");
     }, new MustacheTemplateEngine());
 
-    post("/playNewGameMiddle", (request, response) -> {
+    post("/answer", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
         //Asigno puntaje
-        int ansNum = Integer.parseInt(request.queryParams("answerNumber"));
+        int ansNum = Integer.parseInt(request.queryParams("user_answer"));
         int userId = request.session().attribute("user_id");
         int quesId = request.session().attribute("question_id");
         int gameId = request.session().attribute("game_id");
@@ -147,7 +147,7 @@ public class App {
           model.put("rightAnswers", g.getRightAnswers());
           model.put("wrongAnswers", g.getWrongAnswers());
           Base.close(); 
-          return new ModelAndView(model, "./views/playNewGameEnd.mustache");
+          return new ModelAndView(model, "./views/gameFinished.mustache");
         }
         //Aumento contador de pregunta
         g.increaseNumberQuestion();
@@ -170,8 +170,36 @@ public class App {
         model.put("option3",q.getString("option3"));
         model.put("option4",q.getString("option4"));
         Base.close(); 
-        return new ModelAndView(model, "./views/playNewGameMiddle.mustache");
+        return new ModelAndView(model, "./views/gameAsk.mustache");
     }, new MustacheTemplateEngine());
+
+
+
+    get("/ranking", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Map model = new HashMap();
+        List<User> ranking = User.findBySQL("SELECT * FROM users ORDER BY rightAnswers DESC LIMIT 10");
+        User u = ranking.get(0); // eliminar
+        model.put("top10",ranking);
+        Base.close(); 
+        return new ModelAndView(model, "./views/rankingView.mustache");
+    }, new MustacheTemplateEngine());
+
+
+    post("/logOut", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Map model = new HashMap();
+        // destruyo sesion
+        if (request.session().attribute("user_id") != null) 
+        	request.session().removeAttribute("user_id");
+        if (request.session().attribute("game_id") != null) 
+        	request.session().removeAttribute("game_id");
+        if (request.session().attribute("question_id") != null) 
+        	request.session().removeAttribute("question_id");
+        Base.close(); 
+        return new ModelAndView(model, "./views/index.mustache");
+    }, new MustacheTemplateEngine());
+    
 /*
     post("/playNewGameEnd", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");

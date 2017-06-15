@@ -1,37 +1,29 @@
-
-
-.container {
-    width: 100%;
-}
-
-body { 
-	background-color: #ffffff;
-}
-
-
+/*
 .header {
     width: 100%;
     text-align: center;
     font-size: 350%;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #ff5500;
-	font-weight: bold;
-	margin: auto;
-    
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #ff5500;
+    font-weight: bold;
+    height: 5%;
+    margin-top: 0%;
+    padding-top: 0%;
 }
 
-p {
-	font-family: "Courier New", Courier, monospace;
-	font-weight: bold;
-	font-size: 100%;
-}
 
-img {
-    display: block;
-    margin: auto;
+h1 {
+    font-weight: bold;
+    font-size: 200%;
+    text-align: center;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #ff5500;
+}
+*/
+.container {
     width: 100%;
-    height: 75%;
 }
+
 
 input[type=button], input[type=submit], input[type=reset] {
     background-color: #ff5500;
@@ -45,6 +37,8 @@ input[type=button], input[type=submit], input[type=reset] {
     font-weight: bold;
     font-size: 150%;
 
+    margin-left: 42%;
+
     border-radius: 33px 33px 33px 33px;
     -moz-border-radius: 33px 33px 33px 33px;
     -webkit-border-radius: 33px 33px 33px 33px;
@@ -55,11 +49,21 @@ input[type=button], input[type=submit], input[type=reset] {
     box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
 
-.sign_up_b {
+.box {
     width: 100%;
-    padding-left: 40%;
 }
-.sign_in_b {
+
+
+#imgbox2 {
+    display:  block;
+    width: 100%
+}
+
+img {
     width: 100%;
-    padding-left: 40%;
 }
+/*
+body {
+    background-image: url("/images/r.jpg");
+}
+*/

@@ -1,0 +1,60 @@
+
+
+.box {
+    padding-top: 13%;
+    position: relative;
+    left: 50%;
+}
+
+.er {
+    font-weight: bold;
+    font-size: 150%;
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    color: red;
+}
+
+input[type=text], input[type=password], input[type=email] {
+    background-color: white;
+    border: none;
+    border-bottom: 3px solid red;
+    width: 25%;
+    padding: 12px 20px;
+    font-size: 120%;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+img {
+    position: absolute;
+    padding-top: 11%;
+    left: 15%;
+}
+
+
+p {
+   font-weight: bold;
+   font-size: 150%;
+   font-family: Verdana, Arial, Helvetica, sans-serif; 
+}
+
+input[type=button], input[type=submit], input[type=reset] {
+    background-color: #ff5500;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 25%;
+    font-weight: bold;
+    font-size: 150%;
+
+    border-radius: 33px 33px 33px 33px;
+    -moz-border-radius: 33px 33px 33px 33px;
+    -webkit-border-radius: 33px 33px 33px 33px;
+    border: 0px solid #000000;
+
+    -webkit-box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
+    -moz-box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
+    box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
+}
