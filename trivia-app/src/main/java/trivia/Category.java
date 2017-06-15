@@ -1,5 +1,4 @@
 package trivia;
-
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.validation.UniquenessValidator; 
 

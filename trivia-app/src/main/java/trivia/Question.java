@@ -14,8 +14,6 @@ public class Question extends Model {
     validatePresenceOf("correctOption").message("Please, provide the correct option");
     validatePresenceOf("category_id").message("Please, provide the category id");
     validateRange("correctOption", 1, 4).message("correctOption.outside.limits");
-    //int max = (Category.count()).intValue();
-    //validateRange("category_id", 1, max).message("category_id.outside.limits");
     validateWith(new UniquenessValidator("pregunta")).message("This question exists already.");
   }
 
@@ -23,13 +21,24 @@ public class Question extends Model {
     return this.getInteger("id");
   }
 
-	public static int getRandomQuestion(){
-  	Random r = new Random();
-   	return r.nextInt((Question.count()).intValue() - 1) + 1;
-  }
-
   public String getPregunta(){
     return this.getString("pregunta");
+  }
+
+  public int getCorrectOption() {
+    int resp = this.getInteger("correctOption");
+    return resp;
+  }
+
+  public String getCategoryName(){
+    int category_id = this.getInteger("category_id");
+    Category c = Category.findById(category_id);
+    return c.getString("name");
+  }
+
+	public static Question getRandomQuestion(int gameId){
+    List<Question> l = Question.findBySQL("select * from questions q where q.id not in (select gq.question_id from games_questions gq where game_id=" + gameId + ") order by rand() limit 1");
+    return l.get(0);
   }
 
   public int getWrongAnswer(){
@@ -41,16 +50,5 @@ public class Question extends Model {
       resp = resp--;
     }
     return resp;
-  }
-
-  public int getCorrectOption() {
-	  int resp = this.getInteger("correctOption");
-	  return resp;
- 	}
-
-  public String getCategoryName(){
-    int category_id = this.getInteger("category_id");
-    Category c = Category.findById(category_id);
-    return c.getString("name");
   }
 }

@@ -1,7 +1,5 @@
 package trivia;
-
 import trivia.Question;
-
 import org.javalite.activejdbc.Base;
 import org.junit.After;
 import org.junit.Before;
@@ -135,22 +133,6 @@ public class QuestionTest{
         q.save();
         assertEquals(q.isValid(), false);
     }
-/*
-    @Test
-    public void validateRangeOfCategoryId(){
-        Category c = new Category();
-        c.setCategoryName("nuevaCatgoria");
-        Question q = new Question();
-        q.set("pregunta", "ques");
-        q.set("option1", "asd");
-        q.set("option2", "afg");
-        q.set("option3", "nba");
-        q.set("option4", "kla");
-        q.set("correctOption",5);
-        q.set("category_id",(Category.count()).intValue() + 1);
-        q.save();
-        assertEquals(q.isValid(), false);
-    }*/
 
     @Test
     public void validateUniquenessOfPregunta(){

@@ -1,7 +1,5 @@
 package trivia;
-
 import trivia.User;
-
 import org.javalite.activejdbc.Base;
 import org.junit.After;
 import org.junit.Before;

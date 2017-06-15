@@ -1,5 +1,4 @@
 package trivia;
-
 import java.util.*;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.validation.UniquenessValidator; 
@@ -14,6 +13,9 @@ public class User extends Model {
     validateWith(new UniquenessValidator("email")).message("This email is already taken.");
   }
 
+  public Integer getUId(){
+    return this.getInteger("id");
+  }
 
   public int rightAnswers() {
     return this.getInteger("rightAnswers");
@@ -22,11 +24,6 @@ public class User extends Model {
   public String getUsername() {
     return (String) this.get("username");
   }
-
-  public Integer getUId(){
-    return this.getInteger("id");
-  }
-
 
   public int answerOk(Question q) {
   	return q.getCorrectOption();

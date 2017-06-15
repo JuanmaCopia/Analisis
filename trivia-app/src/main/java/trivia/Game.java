@@ -9,21 +9,7 @@ public class Game extends Model {
     	validatePresenceOf("state").message("Please, provide the state of the game.");
   	}
 
-	public void setBeginning(int user_id) {
-		this.set("cantPreg",0);
-    	this.set("user_id",user_id);
-    	this.set("state","Game_In_Progress");
-    	this.set("rightAnswers", 0);
-    	this.set("wrongAnswers", 0);
-    	this.saveIt();
-	}
-
-	public void increaseNumberQuestion(){
-		this.set("cantPreg",(Integer)this.get("cantPreg")+1);
-        this.saveIt();
-	}
-
-	public int getGId(){
+  	public int getGId(){
 		return this.getInteger("id");
 	}
 
@@ -43,10 +29,24 @@ public class Game extends Model {
 		return this.getString("state");
 	}
 
-  	public void gameOver(){
-        this.set("state","Game_Over");
+	public void setBeginning(int user_id) {
+		this.set("cantPreg",0);
+    	this.set("user_id",user_id);
+    	this.set("state","Game_In_Progress");
+    	this.set("rightAnswers", 0);
+    	this.set("wrongAnswers", 0);
     	this.saveIt();
-  	}
+	}
+
+	public void setStateGameOver(){
+		this.set("state","Game_Over");
+		this.saveIt();
+	}
+
+	public void increaseNumberQuestion(){
+		this.set("cantPreg",(Integer)this.get("cantPreg")+1);
+        this.saveIt();
+	}
 
 	public static void answerQuestion(int question_id, int user_id,int game_id, int option) {
 		Question q = Question.findById(question_id);		

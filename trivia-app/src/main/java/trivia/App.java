@@ -1,24 +1,17 @@
 package trivia;
-
 import org.javalite.activejdbc.Base;
-
 import trivia.User;
-
 import java.util.*;
-
 import static spark.Spark.*;
-
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
 
 
 
 public class App {
-
     public static void main( String[] args ) {
 
     staticFileLocation("/public");
-
    
     get("/", (request, response) -> {
         Map<String, Object> model = new HashMap<>();
@@ -87,7 +80,7 @@ public class App {
         // Chequeo de datos
         List<User> l = User.where("username = ? and password = ?",username,password);
         if (l.isEmpty()) {
-        	model.put("error","Invalid username or password");
+        	model.put("error","Nombre de usuario o password invalido.");
         	Base.close();
         	return new ModelAndView(model,"./views/sign_in.mustache");
         }
@@ -95,7 +88,6 @@ public class App {
         /// Creacion de sesion
         request.session(true);                     // create and return session
         request.session().attribute("user_id",l.get(0).getInteger("id")); // Set session attribute 'user'
-
         Base.close();
         return new ModelAndView(model, "./views/game.mustache");
     }, new MustacheTemplateEngine());
@@ -113,12 +105,12 @@ public class App {
         // inicializo juego
         Game g = new Game();
         g.setBeginning(request.session().attribute("user_id"));
-        request.session().attribute("game_id",g.getInteger("id"));
+        request.session().attribute("game_id",g.getGId());
         // Busco pregunta aleatoria
-        Question q = Question.findById(Question.getRandomQuestion());
-        request.session().attribute("question_id",q.getInteger("id"));
+        Question q = Question.getRandomQuestion(g.getGId());
+        request.session().attribute("question_id",q.getQId());
         model.put("category_name", q.getCategoryName());
-        model.put("question_name",q.getString("pregunta"));
+        model.put("question_name",q.getPregunta());
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));
         model.put("option3",q.getString("option3"));
@@ -138,12 +130,11 @@ public class App {
         Game.answerQuestion(quesId,userId,gameId,ansNum);
         // guardo pregunta en games questions
         GamesQuestions gq = new GamesQuestions();
-        gq.set("game_id",gameId);
-        gq.set("question_id",quesId);
-        gq.saveIt();
+        gq.setGameAndQuestionIds(gameId, quesId);
         ///
         Game g = Game.findById(gameId);
-        if (g.getNumberQuestion()==5){
+        if (g.getNumberQuestion()==9){
+          g.setStateGameOver();
           model.put("rightAnswers", g.getRightAnswers());
           model.put("wrongAnswers", g.getWrongAnswers());
           Base.close(); 
@@ -152,19 +143,10 @@ public class App {
         //Aumento contador de pregunta
         g.increaseNumberQuestion();
         // Busco otra pregunta aleatoria
-        int questionId = Question.getRandomQuestion();
-        // cheequeo que no haya sido preguntada
-        List<GamesQuestions> l = GamesQuestions.where("question_id = ? and game_id = ?",questionId,gameId);
-        if (!l.isEmpty()) {
-        	questionId = Question.getRandomQuestion();
-        }
-
-      
-        Question q = Question.findById(questionId);
-
-        request.session().attribute("question_id",questionId); // set questid
+        Question q = Question.getRandomQuestion(gameId);
+        request.session().attribute("question_id",q.getQId()); // set questid
         model.put("category_name", q.getCategoryName());
-        model.put("question_name",q.getString("pregunta"));
+        model.put("question_name",q.getPregunta());
         model.put("option1",q.getString("option1"));
         model.put("option2",q.getString("option2"));
         model.put("option3",q.getString("option3"));
@@ -199,49 +181,6 @@ public class App {
         Base.close(); 
         return new ModelAndView(model, "./views/index.mustache");
     }, new MustacheTemplateEngine());
-    
-/*
-    post("/playNewGameEnd", (request, response) -> {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        Map model = new HashMap();
-        Game g = Game.findById(request.session().attribute("game_id"));
-        model.put("rightAnswers", g.getRightAnswers());
-        model.put("wrongAnswers", g.getWrongAnswers());
-        Base.close(); 
-        return new ModelAndView(model, "./views/playNewGameEnd.mustache");
-    }, new MustacheTemplateEngine());
-
-*/
-
-
-    /*
-	Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-
-      /*User u = new User();
-      u.set("username", "root");
-      u.set("password", "root");
-      u.saveIt();
-
-      User s = new User();
-      s.set("username", "asdaaaahaassssjj");
-      s.set("password", "juanma");
-      s.set("rightAnswers",0);
-      s.set("wrongAnswers",0);
-      s.saveIt();
-
-      int sebaId=s.getInteger("id");
-      Game g = new Game(sebaId);
-      //Game g = s.playGame();
-
-      Base.close();
-	*/
-
-      /*
-      request.session(true);                     // create and return session
-request.session().attribute("user");       // Get session attribute 'user'
-request.session().attribute("user","foo"); // Set session attribute 'user'
-request.session().removeAttribute("user");
-*/
-
+ 
     }
 }
