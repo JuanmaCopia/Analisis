@@ -22,6 +22,7 @@ public class CategoryTest{
         Base.close();
     }
 
+    //Valida la presencia de nombre de categoria.
     @Test
     public void validatePresenceOfCategoriesNames(){
         Category cat = new Category();
@@ -29,6 +30,7 @@ public class CategoryTest{
         assertEquals(cat.isValid(), false);
     }
 
+    //Valida que el nombre de categoria sea unico.
     @Test
     public void validateUniquenessOfCategoriesNames(){
         Category cat = new Category();

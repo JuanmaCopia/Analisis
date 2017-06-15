@@ -4,6 +4,8 @@ import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.validation.UniquenessValidator; 
 
 public class User extends Model {
+
+  //Bloque estatico para poder utilizar los metodos de validacion correspondientes en las clases de Testing.
   static{
     validatePresenceOf("username").message("Please, provide your username");
     validatePresenceOf("password").message("Please, provide your password");
@@ -13,26 +15,22 @@ public class User extends Model {
     validateWith(new UniquenessValidator("email")).message("This email is already taken.");
   }
 
+  //Retorna el id de usuario.
   public Integer getUId(){
     return this.getInteger("id");
   }
 
+  //Retorna la cantidad de respuestas correctas que ha acumulado el usuario.
   public int rightAnswers() {
     return this.getInteger("rightAnswers");
   }
 
+  //Retorna el nombre de usuario.
   public String getUsername() {
     return (String) this.get("username");
   }
 
-  public int answerOk(Question q) {
-  	return q.getCorrectOption();
-  } 
-
-  public int answerNotOk(Question q){
-  	return q.getWrongAnswer();
-  }
-
+  //Setea los datos del usuario cuando se registra en el juego como nuevo usuario.
   public void setSignUpData(String username, String password, String email){
     this.set("username",username);
     this.set("password",password);
@@ -42,11 +40,13 @@ public class User extends Model {
     this.saveIt();
   }
 
+  //Incrementa el puntaje del usuario.
   public void increaseScore(){
   	this.set("rightAnswers",this.getInteger("rightAnswers")+1);
 	  this.saveIt();
   }
 
+  //Decrementa el puntaje del usuario.
   public void decreaseScore(){
   	this.set("wrongAnswers",this.getInteger("wrongAnswers")+1);
 	  this.saveIt();

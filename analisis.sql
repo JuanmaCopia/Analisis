@@ -5,7 +5,7 @@ insert into questions (pregunta,option1,option2,option3,option4,correctOption,ca
 ("¿A que pais pertenece la Isla de Tasmania?","Estados Unidos", "España", "Australia", "Portugal",3,1),
 ("¿Cuanto es (9-6)*5?","15","9","16","18",1,2),
 ("¿Cuanto es 7*7?","48","49","47","56",2,2),
-("A medida que uno se aleja de la superficie terrestre, ¿Que sucede con la densidad del aire?","Se mantiene constante","Aumenta","Disminuye","Varia segun el punto geografico",3,6),
+("A medida que uno se aleja de la superficie terrestre, ¿Que sucede con la densidad del aire?","Se mantiene constante","Aumenta","Disminuye","Ninguna de las anteriores",3,6),
 ("¿Con que metal se protejen de las radiaciones los tecnicos y medicos radiólogos?","con hierro","con plomo","con oro","con cobre",2,6),
 ("¿Que medida mide doce pulgadas?","Un pie","Una yarda","Un palmo","Ninguna de las anteriores",1,6),
 ("¿Que contienen las bolsitas anti-humedad que vienen en las cajas de los aparatos electronicos?","Talco","Sal","Siliconas","Otras sales",3,6),
@@ -19,7 +19,7 @@ insert into questions (pregunta,option1,option2,option3,option4,correctOption,ca
 ("¿Dónde surgió la filosofía?","España","Italia","Japon","Grecia",4,4),
 ("¿Cuántas finales del mundo jugó la Selección Argentina de fútbol?","3","4","5","6",3,3),
 (" ¿Cuántos jugadores componen un equipo de rugby?","12","17","15","13",3,3),
-("¿Qué selección acumula mayor cantidad de expulsados en  mundiales de fútbol?","Argentina","Brasil","Holanda","Italia",1,2),
+("¿Qué selección acumula mayor cantidad de expulsados en  mundiales de fútbol?","Argentina","Brasil","Holanda","Italia",1,3),
 ("¿Quién es la mascota de SEGA?","Mario","Pacman","Ryu","Sonic",4,7);
 
 
@@ -33,7 +33,10 @@ insert into categories (name) values
 ("Entretenimiento");
 
 insert into users (username,password,email,rightAnswers,wrongAnswers,admin) values
-("seba","seba","sebaemail",0,0,true),
-("juanma","juanma","juanmaemail",0,0,true);
+("seba","seba","seba@gmail.com",12,0,true),
+("juanma","juanma","juanma@gmail.com",25,0,true),
+("pepe","seba","pepe@gmail.com",66,0,false),
+("jose","seba","jose@gmail.com",54,0,false),
+("cacho","cacho","cacho@gmail.com",125,0,false);
 
 select * from users

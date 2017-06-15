@@ -22,6 +22,7 @@ public class UserTest{
         Base.close();
     }
 
+    //Valida la presencia de nombre de usuario, contraseña y el e-mail.
     @Test
     public void validatePrecenseOfUsernamesAndPasswordAndEmail(){
         User user = new User();
@@ -34,6 +35,7 @@ public class UserTest{
         assertEquals(user.isValid(), true);
     }
 
+    //Valida que el nombre de usuario sea unico. 
     @Test
     public void validateUniquenessOfUsernames() {
         User u = new User();
@@ -50,6 +52,7 @@ public class UserTest{
         assertEquals(u2.errors().get("username"), "This username is already taken.");
     }
 
+    //Valida que el e-mail de un usuario sea unico.
     @Test
     public void validateUniquenessOfEmails() {
         User u = new User();
@@ -66,6 +69,7 @@ public class UserTest{
         assertEquals(u2.errors().get("email"), "This email is already taken.");
     } 
 
+    //Valida que el formato del e-mail sea correcto.
     @Test
     public void validateEmailOfUser(){
         User u = new User();

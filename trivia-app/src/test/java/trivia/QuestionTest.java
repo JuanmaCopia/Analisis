@@ -22,6 +22,7 @@ public class QuestionTest{
         Base.close();
     }
 
+    //Valida la presencia del campo pregunta.
     @Test
     public void validatePresenceOfPregunta(){
         Question q = new Question();
@@ -36,6 +37,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida la presencia de la opcion 1.
     @Test
     public void validatePresenceOfOption1(){
         Question q = new Question();
@@ -50,6 +52,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida la presencia de la opcion 2.
     @Test
     public void validatePresenceOfOption2(){
         Question q = new Question();
@@ -64,6 +67,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida la presencia de la opcion 3.
     @Test
     public void validatePresenceOfOption3(){
         Question q = new Question();
@@ -78,6 +82,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida la presencia de la opcion 4.
     @Test
     public void validatePresenceOfOption4(){
         Question q = new Question();
@@ -92,6 +97,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida la presencia de una opcion correcta.
     @Test
     public void validatePresenceOfCorrectOption(){
         Question q = new Question();
@@ -106,6 +112,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida la presencia de un id de categoria.
     @Test
     public void validatePresenceOfCategoryId(){
         Question q = new Question();
@@ -120,6 +127,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida que el rango de respuesta correcta sea entre 1 y 4.
     @Test
     public void validateRangeOfCorrectOption(){
         Question q = new Question();
@@ -134,6 +142,7 @@ public class QuestionTest{
         assertEquals(q.isValid(), false);
     }
 
+    //Valida que la pregunta sea unica.
     @Test
     public void validateUniquenessOfPregunta(){
         Question q = new Question();

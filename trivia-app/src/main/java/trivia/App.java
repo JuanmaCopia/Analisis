@@ -1,14 +1,10 @@
 package trivia;
-
 import org.javalite.activejdbc.Base;
 import trivia.User;
-
 import java.util.*;
 import static spark.Spark.*;
-
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
-
 
 public class App {
     public static void main( String[] args ) {
