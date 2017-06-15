@@ -8,35 +8,46 @@
 
 <body>
 
-<img src="/images/corona.png">
 
 <div class="box">
-    <form method="post" action="/sign_up_check">
 
-        <p>Usuario: </p> 
-        <input type="text" name="username"  autocomplete="off" placeholder="Nombre de usuario" required>
 
-        <br>
+	<div class="im">
+		<img src="/images/corona.png">
+	</div>
 
-        <p>Contraseña: </p> 
-        <input type="password" name="password" placeholder="Contraseña" required>
 
-        <br>
+	<div class="boxin">
 
-        <p>Repetir contraseña: </p> 
-        <input type="password" name="passwordRep" placeholder="Contraseña" required>
+    	<form method="post" action="/sign_up_check">
 
-        <br>
+        	<p>Usuario: </p> 
+        	<input type="text" name="username"  autocomplete="off" placeholder="Nombre de usuario" required>
 
-        <p>Email: </p>
-        <input type="email" name="email" autocomplete="off" placeholder="email@example.com" required>
+        	<br>
+
+        	<p>Contraseña: </p> 
+        	<input type="password" name="password" placeholder="Contraseña" required>
+
+        	<br>
+
+        	<p>Repetir contraseña: </p> 
+        	<input type="password" name="passwordRep" placeholder="Contraseña" required>
+
+        	<br>
+
+        	<p>Email: </p>
+        	<input type="email" name="email" autocomplete="off" placeholder="email@example.com" required>
   
-        <br>
-        <p class="er">{{error}}</p>
-        <br>
-        <input type="submit" value="Crear cuenta">
+        	<br>
+        	<p class="er">{{error}}</p>
+        	<br>
+        	<input type="submit" value="Crear cuenta">
 
-    </form> 
+    	</form> 
+
+    </div>
+
 <div>
 
 

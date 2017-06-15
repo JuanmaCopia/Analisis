@@ -1,9 +1,9 @@
 
 
 .box {
-    padding-top: 13%;
-    position: relative;
-    left: 50%;
+    margin-top: 12%;
+    width: 100%;
+    height: 100%;
 }
 
 .er {
@@ -17,17 +17,29 @@ input[type=text], input[type=password], input[type=email] {
     background-color: white;
     border: none;
     border-bottom: 3px solid red;
-    width: 25%;
+    width: 100%;
     padding: 12px 20px;
     font-size: 120%;
     box-sizing: border-box;
     border-radius: 4px;
 }
 
-img {
-    position: absolute;
-    padding-top: 11%;
-    left: 15%;
+.im {
+    display: inline-block;
+    margin: 0 auto;
+    float: left;
+    margin-left: 11%;
+}
+
+
+.boxin {
+    display: inline-block;
+    margin-left: 10% 
+    padding-bottom: 6%;
+    float: left;
+    margin-left: 6%;
+    width: 25%;
+
 }
 
 
@@ -45,7 +57,7 @@ input[type=button], input[type=submit], input[type=reset] {
     text-decoration: none;
     margin: 4px 2px;
     cursor: pointer;
-    width: 25%;
+    width: 100%;
     font-weight: bold;
     font-size: 150%;
 
