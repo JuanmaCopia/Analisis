@@ -14,6 +14,11 @@ public class User extends Model {
     validateWith(new UniquenessValidator("email")).message("This email is already taken.");
   }
 
+
+  public int rightAnswers() {
+    return this.getInteger("rightAnswers");
+  }
+
   public String getUsername() {
     return (String) this.get("username");
   }
