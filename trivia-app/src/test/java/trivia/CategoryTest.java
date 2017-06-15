@@ -24,23 +24,22 @@ public class CategoryTest{
         Base.close();
     }
 
-    // @Test
-    // public void validateUniquenessOfUsernames(){
-    //     User user = new User();
-    //     user.set("username", "anakin");
-    //     user.saveIt();
-
-    //     User user2 = new User();
-    //     user.set("username", "anakin");
-
-    //     assertEquals(user2.isValid(), false);
-    // }
+    @Test
+    public void validatePresenceOfCategoriesNames(){
+        Category cat = new Category();
+        cat.set("name", "");
+        assertEquals(cat.isValid(), false);
+    }
 
     @Test
     public void validateUniquenessOfCategoriesNames(){
         Category cat = new Category();
-        cat.set("name", "");
-
-        assertEquals(cat.isValid(), false);
+        cat.set("name", "Deportes Acuaticos");
+        cat.saveIt();
+        Category cat2 = new Category();
+        cat2.set("name", "Deportes Acuaticos");
+        cat2.save();
+        assertEquals(cat2.isValid(), false);
+        assertEquals(cat2.errors().get("name"), "This name is already taken.");
     }
 }

@@ -8,34 +8,28 @@ public class User extends Model {
   static{
     validatePresenceOf("username").message("Please, provide your username");
     validatePresenceOf("password").message("Please, provide your password");
-    validateWith(new UniquenessValidator("username")).message("This username is already taken."); // validar que sea unico
+    validatePresenceOf("email").message("Please, provide your email");
+    validateEmailOf("email");
+    validateWith(new UniquenessValidator("username")).message("This username is already taken.");
+    validateWith(new UniquenessValidator("email")).message("This email is already taken.");
   }
 
-/*
-  public Game playGame(){
-  	int id = (Long)this.get("id");
-  	Game g = new Game(id);
-  	return g;
-  }*/
-
-
-
-  public String username () {
+  public String getUsername() {
     return (String) this.get("username");
   }
 
-  public Integer getId(){
+  public Integer getUId(){
     return this.getInteger("id");
   }
 
-/*
-  public String responderBien (Question q) {
-	return Question.getCorrectAnswer(q);
+
+  public int answerOk(Question q) {
+  	return q.getCorrectOption();
   } 
 
-  public String responderMal(Question q){
-  	return Question.getWrongAnswer(q);
-  }*/
+  public int answerNotOk(Question q){
+  	return q.getWrongAnswer();
+  }
 
   public void setSignUpData(String username, String password, String email){
     this.set("username",username);
