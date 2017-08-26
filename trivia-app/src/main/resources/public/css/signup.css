@@ -1,51 +1,79 @@
-.box {
-    width: 100%;
+body {
+    background-image: url("/images/backO.jpg");
+}
+
+.container {
+    width: 85%;
     height: 100%;
+    min-height: 970px;
+    margin:0 auto;
+    overflow: hidden;
+    background-color: #ffffff;
 }
 
 .er {
     font-weight: bold;
-    font-size: 150%;
+    font-size: 1.1vmax;
     font-family: Verdana, Arial, Helvetica, sans-serif; 
     color: red;
 }
 
+
+header {
+    background-color: #ff5500;
+    width: 100%;
+    text-align: center;
+    font-size: 3vmax;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 2vh;
+    box-sizing: border-box;
+    padding: 0.1vh;
+}
+
+
+
 input[type=text], input[type=password], input[type=email] {
     background-color: white;
     border: none;
-    border-bottom: 3px solid red;
-    width: 100%;
-    padding: 12px 20px;
-    font-size: 120%;
+    border-bottom: 0.3vmin solid red;
+    width: 70%;
+    /*padding: 0.2vw 0.2vw;*/
+    font-size: 1vmax;
     box-sizing: border-box;
     border-radius: 4px;
 }
 
-.im {
-    padding-top: 12%;
-    margin-top: 12%;
-    display: inline-block;
-    margin: 0 auto;
+
+img {
+    margin-top: 4vh;
+    height: 100%;
+    width: 50%;
+    height:auto;
     float: left;
-    margin-left: 11%;
+    box-sizing: border-box;
+    padding-left: 10vw;
+    padding-top: 2vh;
+    padding-bottom: 3vh;
+    text-align: center;
 }
 
 
 .boxin {
-    margin-top: 5%;
-    display: inline-block;
-    margin-left: 10% 
-    padding-bottom: 6%;
-    float: left;
-    margin-left: 6%;
-    width: 25%;
-
+    height: 100%;
+    width: 50%;
+    height:auto;
+    float: right;
+    box-sizing: border-box;
+    padding-right: 10vw;
+    padding-left: 7vw;
 }
 
 
 p {
    font-weight: bold;
-   font-size: 150%;
+   font-size: 1.2vmax;
    font-family: Verdana, Arial, Helvetica, sans-serif; 
 }
 
@@ -53,13 +81,13 @@ input[type=button], input[type=submit], input[type=reset] {
     background-color: #ff5500;
     border: none;
     color: white;
-    padding: 16px 32px;
+    padding: 0.2vw;
     text-decoration: none;
-    margin: 4px 2px;
+    /*margin: 0.5vmax;*/
     cursor: pointer;
-    width: 100%;
+    width: 70%;
     font-weight: bold;
-    font-size: 150%;
+    font-size: 1.3vmax;
 
     border-radius: 33px 33px 33px 33px;
     -moz-border-radius: 33px 33px 33px 33px;

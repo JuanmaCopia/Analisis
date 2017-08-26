@@ -1,49 +1,74 @@
 
 
+body {
+    background-image: url("/images/backO.jpg");
+}
+
 .container {
-    width: 100%;
+    width: 85%;
+    height: 100%;
+    min-height: 970px;
+    margin:0 auto;
+    overflow: hidden;
+    background-color: #ffffff;
 }
 
-body { 
-	background-color: #ffffff;
-}
 
-
-.header {
+.main {
     width: 100%;
+    box-sizing: border-box;
+    margin:auto;
     text-align: center;
-    font-size: 350%;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	color: #ff5500;
-	font-weight: bold;
-	margin: auto;
-    
 }
 
-p {
-	font-family: "Courier New", Courier, monospace;
-	font-weight: bold;
-	font-size: 100%;
+footer {
+    width: 100%;
+    box-sizing: border-box;
+    height:auto;
 }
+
 
 img {
-    display: block;
-    margin: auto;
+    height: 100%;
     width: 100%;
-    height: 75%;
+    height:auto;
+    box-sizing: border-box;
 }
+
+
+
+@media screen and (max-width: 400px) {
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+header {
+    background-color: #ff5500;
+    width: 100%;
+    text-align: center;
+    font-size: 3vmax;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #ffffff;
+	font-weight: bold;
+	margin-bottom: 2vh;
+    box-sizing: border-box;
+    padding: 0.1vh;
+}
+
 
 input[type=button], input[type=submit], input[type=reset] {
     background-color: #ff5500;
     border: none;
     color: white;
-    padding: 16px 32px;
+    padding: 0.5vmax;
     text-decoration: none;
-    margin: 4px 2px;
+    margin: 0.6vmax;
     cursor: pointer;
-    width: 17%;
+    width: 20%;
     font-weight: bold;
-    font-size: 150%;
+    font-size: 1.3vmax;
 
     border-radius: 33px 33px 33px 33px;
     -moz-border-radius: 33px 33px 33px 33px;
@@ -55,6 +80,7 @@ input[type=button], input[type=submit], input[type=reset] {
     box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
 
+/*
 .sign_up_b {
     width: 100%;
     padding-left: 40%;
@@ -63,3 +89,4 @@ input[type=button], input[type=submit], input[type=reset] {
     width: 100%;
     padding-left: 40%;
 }
+*/
