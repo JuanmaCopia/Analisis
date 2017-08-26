@@ -1,53 +1,50 @@
 
-.quest {
-    display: block;
+body {
+    background-image: url("/images/backO.jpg");
 }
-
-
-#question {
-    width: 100%;
-    font-weight: bold;
-    font-size: 180%;
-    text-align: center;
-}
-
-span {
-    font-weight: bold;
-    font-size: 280%;
-    text-align: center;
-    font-family: Verdana, Arial, Helvetica, sans-serif; 
-    color: green;
-}
-
-p {
-    font-weight: bold;
-    font-size: 280%;
-    text-align: center;
-}
-
 
 .container {
-    width: 100%;
-    padding-top: 5%;
+    width: 85%;
+    height: 100%;
+    min-height: 970px;
+    margin:0 auto;
+    overflow: hidden;
+    text-align: center;
+    background-color: #ffffff;
 }
 
-.form {
+
+.main {
+    width: 100%;
+    box-sizing: border-box;
+    margin:auto;
     text-align: center;
-    width: 100%
-    height: 30%;
+}
+
+header {
+    background-color: #ff5500;
+    width: 100%;
+    text-align: center;
+    font-size: 3vmax;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 2vh;
+    box-sizing: border-box;
+    padding: 0.1vh;
 }
 
 input[type=button], input[type=submit], input[type=reset] {
     background-color: #ff5500;
     border: none;
     color: white;
-    padding: 16px 32px;
+    padding: 0.5vmax;
     text-decoration: none;
-    margin: 4px 2px;
+    margin: 0.6vmax;
     cursor: pointer;
-    width: 25%;
+    width: 26%;
     font-weight: bold;
-    font-size: 150%;
+    font-size: 1.3vmax;
 
     border-radius: 33px 33px 33px 33px;
     -moz-border-radius: 33px 33px 33px 33px;
@@ -58,3 +55,45 @@ input[type=button], input[type=submit], input[type=reset] {
     -moz-box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
     box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
+/*
+#question {
+    width: 100%;
+    font-weight: bold;
+    font-size: 180%;
+    text-align: center;
+}
+*/
+
+span {
+    font-weight: bold;
+    font-size: 4vw;
+    text-align: center;
+    font-family: Verdana, Arial, Helvetica, sans-serif; 
+    color: green;
+}
+
+p {
+    font-weight: bold;
+    font-size: 2vw;
+    text-align: center;
+}
+
+
+.question {
+    margin:0 auto;
+    width: 80%;
+    background-color: #f2f2f2;
+    
+    border-radius: 155px 155px 155px 155px;
+    -moz-border-radius: 155px 155px 155px 155px;
+    -webkit-border-radius: 155px 155px 155px 155px;
+    border: 0.5vh solid #e6e6e6;
+}
+
+@media screen and (max-width: 400px) {
+    .container {
+        width: 100%;
+        height: 100%;
+    }
+}
+

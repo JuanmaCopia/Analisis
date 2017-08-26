@@ -1,38 +1,47 @@
-.container {
-	position: absolute;
-    width: 100%;
-    display: block;
-    font-weight: bold;
-    font-family: Verdana, Arial, Helvetica, sans-serif; 
+body {
+    background-image: url("/images/backO.jpg");
 }
+
+.container {
+    width: 85%;
+    height: 100%;
+    min-height: 970px;
+    margin:0 auto;
+    overflow: hidden;
+    text-align: center;
+    background-color: #ffffff;
+}
+
+header {
+    background-color: #ff5500;
+    width: 100%;
+    text-align: center;
+    font-size: 3vw;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 2vh;
+    box-sizing: border-box;
+    padding: 0.1vh;
+}
+
 
 h1 {
-	font-weight: bold;
-    font-family: Verdana, Arial, Helvetica, sans-serif;
-    font-size: 480%;
+    font-weight: bold;
+    font-size: 4vw;
     text-align: center;
-
-}
-
-span {
-	font-weight: bold;
-    font-size: 180%;
     font-family: Verdana, Arial, Helvetica, sans-serif; 
 }
 
-.sub {
-	padding-left: 2%;
-	padding-right: 2%; 
-	padding-bottom: 3%;
-	display: block;
-	width: 30%;
-	height: 12%;
-	position: static;
-	background-color: #ff9900;
-	margin-top: 1%;
-	margin-left: 32%;
 
-	border-radius: 33px 33px 33px 33px;
+.sub {
+    display: block;
+    margin:1% auto;
+    width: 45%;
+    background-color: #ffad33;
+    padding:0.1vw; 
+    text-align: left;
+    border-radius: 33px 33px 33px 33px;
     -moz-border-radius: 33px 33px 33px 33px;
     -webkit-border-radius: 33px 33px 33px 33px;
     border: 0px solid #000000;
@@ -42,10 +51,13 @@ span {
     box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
 
-
-.name {
-	float: left;
+p {
+    font-weight: bold;
+    font-size: 1.5vw;
 }
+
+
+
 
 .points {
 	float: right;
@@ -56,32 +68,29 @@ span {
 .imgbox {
     display: block;
     position: absolute;
-    margin-left: 69%;
-    margin-top: 34%; 
+    margin-left: 66%;
+    margin-top: 50%; 
 }
 
 
 .imgbox5 {
     position: absolute;
-    margin-left: 21%; 
+    margin-left: 4%;
+    margin-top: 4%;  
 }
 
-
-body {
-	background-image: url("/images/r.jpg");
-}
 
 input[type=button], input[type=submit], input[type=reset] {
     background-color: #ff5500;
     border: none;
     color: white;
-    padding: 16px 32px;
+    padding: 0.5vmax;
     text-decoration: none;
-    margin: 4px 2px;
+    margin: 0.6vmax auto;
     cursor: pointer;
-    width: 25%;
+    width: 26%;
     font-weight: bold;
-    font-size: 150%;
+    font-size: 1.3vmax;
 
     border-radius: 33px 33px 33px 33px;
     -moz-border-radius: 33px 33px 33px 33px;
@@ -93,7 +102,3 @@ input[type=button], input[type=submit], input[type=reset] {
     box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
 
-.form {
-	text-align: center;
-	margin-top: 3%;
-}

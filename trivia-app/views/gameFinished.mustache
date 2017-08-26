@@ -4,26 +4,37 @@
 <head>
 	<title>Fin -Pregunta2</title>
 	<link rel='stylesheet' href='/css/gameFinished.css'>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
 </head>
 
 <body>
+	<div class="container">
 
-	<div class="header">
-		<h1>Felicitaciones!</h1>
+		<header>
+    	    <h1>Pregunta2</h1>
+    	</header>
+
+
+		<h2>Felicitaciones!</h2>
+
+
+		<div class="statistics">
+			<div class="correctCircle">
+				<p>Respuestas Correctas: <span id="correct"> {{rightAnswers}} </span> </p>
+			</div>
+			<div class="incorrectCircle"> 
+				<p>Respuestas Incorrectas: <span id="incorrect"> {{wrongAnswers}} </span> </p>
+			</div>
+		</div>
+
+		<div class="main">
+			<form method="get" action="/game2">
+				   <input type="submit" value="Aceptar"/>
+			</form>
+			<form method="post" action="/gameStart">
+				   <input type="submit" value="Jugar nuevamente"/>
+			</form>
+		</div>
+
 	</div>
-
-	<div class="statistics">
-		<p>Respuestas Correctas: <span id="correct"> {{rightAnswers}} </span> </p> 
-		<p>Respuestas Incorrectas: <span id="incorrect"> {{wrongAnswers}} </span> </p>
-	</div>
-
-	<div class="form">
-		<form method="get" action="/game2">
-			   <input type="submit" value="Aceptar"/>
-		</form>
-		<form method="post" action="/gameStart">
-			   <input type="submit" value="Jugar nuevamente"/>
-		</form>
-	</div>
-
 </body>
