@@ -66,12 +66,12 @@ public class Game extends Model {
 		User u = User.findById(user_id);
 		if (option == correctAnswer) {
 			u.increaseScore();
-			g.set("rightAnswers",g.getInteger("rightAnswers") + 1); // rightAnswers 
+			g.set("rightAnswers",g.getInteger("rightAnswers") + 1); 
 			g.saveIt();
 		}
 		else {
 			u.decreaseScore();
-			g.set("wrongAnswers",g.getInteger("wrongAnswers") + 1); // wrongAnswers
+			g.set("wrongAnswers",g.getInteger("wrongAnswers") + 1); 
 			g.saveIt();
 		}
 
