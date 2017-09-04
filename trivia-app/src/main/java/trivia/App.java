@@ -106,7 +106,7 @@ public class App {
         return new ModelAndView(model, "./views/gameAsk.mustache");
     }, new MustacheTemplateEngine());
 
-    // Chequea si la respuesta es correcta o no, e incrementa los contadores correspondientes, se engarga tambien de buscar la siguiente pregunta y insertarla en el modelo
+    // Chequea si la respuesta es correcta o no, e incrementa los contadores correspondientes, se engarga tambien de indicar si la respuesta fue correcta o no, y en caso de ser incorrecta decir cual deberia haber sido.
     post("/answer", (request, response) -> {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Map model = new HashMap();
@@ -117,6 +117,33 @@ public class App {
         Game.answerQuestion(quesId,userId,gameId,ansNum);
         GamesQuestions gq = new GamesQuestions();
         gq.setGameAndQuestionIds(gameId, quesId);
+        Question q = Question.findById(quesId);
+        int correctOption = q.getCorrectOption();
+        if (correctOption == ansNum){
+            Base.close(); 
+            return new ModelAndView(model, "./views/rightAnswer.mustache");
+        }
+        else{
+            switch (correctOption){
+                case 1: model.put("correctOp", q.getString("option1"));
+                        break;
+                case 2: model.put("correctOp", q.getString("option2"));
+                        break;
+                case 3: model.put("correctOp", q.getString("option3"));
+                        break;
+                case 4: model.put("correctOp", q.getString("option4"));
+                        break;
+            }
+            Base.close(); 
+            return new ModelAndView(model, "./views/wrongAnswer.mustache");
+        }
+    }, new MustacheTemplateEngine());
+
+    //Se engarga de buscar la siguiente pregunta e insertarla en el modelo, o mostrar el puntaje final en caso de haber finalizado la partida.
+    post("/nextQuestion", (request, response) -> {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Map model = new HashMap();          
+        int gameId = request.session().attribute("game_id");
         Game g = Game.findById(gameId);
         if (g.getNumberQuestion()==9){
           g.setStateGameOver(); 
@@ -137,7 +164,6 @@ public class App {
         Base.close(); 
         return new ModelAndView(model, "./views/gameAsk.mustache");
     }, new MustacheTemplateEngine());
-
 
     // Retorna la vista del ranking (Top 10)
     get("/ranking", (request, response) -> {
