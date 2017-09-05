@@ -9,35 +9,33 @@
 
 <body>
 
-
 <div class="container">
 
-	<header>
-        <h1>Pregunta2</h1>
-    </header>
+	<div class="header">
+    	<h1>Pregunta2</h1>
+    </div>
 
-	<div class="question">
-		<p>Categoria: <span>{{category_name}}</span></p>
-		<p >{{question_name}}</p>
-	</div>
+    <div class="subcontainer">
+		<div class="question">
+			<p>Categoria: <span>{{category_name}}</span></p>
+			<p >{{question_name}}</p>
+		</div>
 	
-	<div class="main">
-
-		<form method="post" action="/answer?user_answer=1">
-			<input type="submit" value="{{option1}}">
-		</form>
-		<form method="post" action="/answer?user_answer=2">
-			<input type="submit" value="{{option2}}">
-		</form>
-		<form method="post" action="/answer?user_answer=3">
-			<input type="submit" value="{{option3}}">
-		</form>
-		<form method="post" action="/answer?user_answer=4">
-			<input type="submit" value="{{option4}}">
-		</form>
-
+		<div class="main">
+			<form method="post" action="/answer?user_answer=1">
+				<input type="submit" value="{{option1}}">
+			</form>
+			<form method="post" action="/answer?user_answer=2">
+				<input type="submit" value="{{option2}}">
+			</form>
+			<form method="post" action="/answer?user_answer=3">
+				<input type="submit" value="{{option3}}">
+			</form>
+			<form method="post" action="/answer?user_answer=4">
+				<input type="submit" value="{{option4}}">
+			</form>
+		</div>
 	</div>
-
 </div>
 
 </body>

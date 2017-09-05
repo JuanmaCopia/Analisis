@@ -5,31 +5,31 @@
     <title>Ranking - Pregunta2</title>
     <link rel='stylesheet' href='/css/ranking.css'>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-</head
+</head>
 
 <body>
 
 	<div class="container"> 
 
-        <header>
+        <div class="header">
             <h1>Pregunta2</h1>
-        </header>
-		
+        </div>
+		<!--This is a comment. Comments are not displayed in the browser
     	<div class="imgbox5">
     		<img src="./images/re8.png">
     	</div>
-
     	<div class="imgbox">
     		<img src="./images/re3.png">
     	</div>
+    	-->
         
-    	<h1>Top 10</h1>
-
+    	<h2>Top 10</h2>
     	    {{#top10}}
     	    	<div class="sub">
     	        	<p> <span class="name"> {{username}} </span>   <span class="points"> {{rightAnswers}} </span> </p>
     	        </div>
     	    {{/top10}}
+
     	<div class="form">    
     	    <form action="/game2" method="get">
 				<input type="submit" value="Volver al Menu">

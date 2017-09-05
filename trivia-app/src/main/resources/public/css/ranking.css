@@ -11,27 +11,30 @@ body {
     background-color: #ffffff;
 }
 
-header {
+.header {
     background-color: #ff5500;
     width: 100%;
     text-align: center;
-    font-size: 3vw;
+    font-size: 3vmax;
     font-family: Verdana, Arial, Helvetica, sans-serif;
     color: #ffffff;
     font-weight: bold;
     margin-bottom: 2vh;
     box-sizing: border-box;
-    padding: 0.1vh;
+    height: 20vh;
+
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
 }
 
-
-h1 {
+h2 {
     font-weight: bold;
     font-size: 4vw;
     text-align: center;
     font-family: Verdana, Arial, Helvetica, sans-serif; 
 }
-
 
 .sub {
     display: block;
@@ -55,29 +58,9 @@ p {
     font-size: 1.5vw;
 }
 
-
-
-
 .points {
 	float: right;
 }
-
-
-
-.imgbox {
-    display: block;
-    position: absolute;
-    margin-left: 66%;
-    margin-top: 50%; 
-}
-
-
-.imgbox5 {
-    position: absolute;
-    margin-left: 4%;
-    margin-top: 4%;  
-}
-
 
 input[type=button], input[type=submit], input[type=reset] {
     background-color: #ff5500;

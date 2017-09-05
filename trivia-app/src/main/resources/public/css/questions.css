@@ -5,22 +5,14 @@ body {
 
 .container {
     width: 85%;
-    height: 100%;
+    height: 98vh;
     margin:0 auto;
     overflow: hidden;
     text-align: center;
     background-color: #ffffff;
 }
 
-
-.main {
-    width: 100%;
-    box-sizing: border-box;
-    margin:auto;
-    text-align: center;
-}
-
-header {
+.header {
     background-color: #ff5500;
     width: 100%;
     text-align: center;
@@ -30,7 +22,19 @@ header {
     font-weight: bold;
     margin-bottom: 2vh;
     box-sizing: border-box;
-    padding: 0.1vh;
+    height: 20%;
+
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+}
+
+.main {
+    width: 100%;
+    box-sizing: border-box;
+    margin:auto;
+    text-align: center;
 }
 
 input[type=button], input[type=submit], input[type=reset] {
@@ -54,14 +58,6 @@ input[type=button], input[type=submit], input[type=reset] {
     -moz-box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
     box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
-/*
-#question {
-    width: 100%;
-    font-weight: bold;
-    font-size: 180%;
-    text-align: center;
-}
-*/
 
 span {
     font-weight: bold;
@@ -77,12 +73,16 @@ p {
     text-align: center;
 }
 
+.subcontainer {
+	width: 100%;
+	margin-top: 5%;
+}
+
 
 .question {
     margin:0 auto;
-    width: 80%;
+    width: 75%;
     background-color: #f2f2f2;
-    
     border-radius: 155px 155px 155px 155px;
     -moz-border-radius: 155px 155px 155px 155px;
     -webkit-border-radius: 155px 155px 155px 155px;

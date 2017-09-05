@@ -145,14 +145,14 @@ public class App {
         Map model = new HashMap();          
         int gameId = request.session().attribute("game_id");
         Game g = Game.findById(gameId);
-        if (g.getNumberQuestion()==9){
+        g.increaseNumberQuestion();
+        if (g.getNumberQuestion()==10){
           g.setStateGameOver(); 
           model.put("rightAnswers", g.getRightAnswers());
           model.put("wrongAnswers", g.getWrongAnswers());
           Base.close(); 
           return new ModelAndView(model, "./views/gameFinished.mustache");
         }
-        g.increaseNumberQuestion();
         Question q = Question.getRandomQuestion(gameId);
         request.session().attribute("question_id",q.getQId()); 
         model.put("category_name", q.getCategoryName());

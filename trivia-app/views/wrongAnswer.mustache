@@ -3,16 +3,25 @@
 
 <head>
     <title>Respuesta Incorrecta - Pregunta2</title>
-</head
+    <link rel='stylesheet' href='/css/questionFeedback.css'>
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+</head>
 
 <body>
-    <header>
-        <h1>La respuesta es INCORRECTA!!!!</h1>
-    </header>
-        <form method="post" action="/nextQuestion">
-            <p>La respuesta es INCORRECTA!!!!</p> 
-            <p>La respuesta era: <span>{{correctOp}}</span></p>
-            <input type="submit" value="Continuar">
-        </form>
+	<div class="container">
+
+    	<div class="header">
+    		<h1>Pregunta2</h1>
+    	</div>
+
+    	<div class="main">
+			<p id="incorrect">Incorrecto!</p>
+			<p>La respuesta era: <span>{{correctOp}}</span></p>
+			<form method="post" action="/nextQuestion">
+				<input type="submit" value="Continuar"/>
+			</form>
+		</div>
+    </div>
+ 
 </body>
 </html>
