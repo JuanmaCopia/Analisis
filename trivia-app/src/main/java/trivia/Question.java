@@ -20,30 +20,56 @@ public class Question extends Model {
         validateWith(new UniquenessValidator("pregunta")).message("This question exists already.");
     }
 
-    //Retorna el id de Question.
+    /**
+     * returns the id of the current object.
+     * @pre. this != null
+     * @return an int value that is the id of this question.
+     * @post. the question id must be returned.
+     */
     public int getQId() {
         return this.getInteger("id");
     }
 
-    //Retorna la pregunta.
+    /**
+     * returns the "pregunta" of the current question.
+     * @pre. this != null
+     * @return an String value that is the pregunta of this question.
+     * @post. the question's pregunta must be returned.
+     */
     public String getPregunta() {
         return this.getString("pregunta");
     }
 
-    //Retorna la opcion correcta.
+    /**
+     * returns the correctOption of the current question.
+     * @pre. this != null
+     * @return an int value that is the correctOption of this question.
+     * @post. the question's correctOption must be returned.
+     */
     public int getCorrectOption() {
         int resp = this.getInteger("correctOption");
         return resp;
     }
 
-    //Retorna el nombre de la categoria que corresponda a la pregunta con la cual se invoca el metodo.
+    /**
+     * Returns the category name the question belongs to.
+     * @pre. this != null
+     * @return an String value that is the category name this question belongs to.
+     * @post. the category name this question belongs to, must be returned.
+     */
     public String getCategoryName() {
         int category_id = this.getInteger("category_id");
         Category c = Category.findById(category_id);
         return c.getString("name");
     }
 
-    //Retorna una pregunta de manera aleatoria.
+    /**
+     * returns a not repeated random question.
+     * @param gameId
+     * @pre. this != null
+     * @return a not repeated random question.
+     * @post. a not repeated random question must be returned.
+     */
     public static Question getRandomQuestion(int gameId) {
         List<Question> l = Question.findBySQL("select * from questions q where q.id not in (select gq.question_id from games_questions gq where game_id=" + gameId + ") order by rand() limit 1");
         return l.get(0);

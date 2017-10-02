@@ -62,7 +62,12 @@ public class Game extends Model {
 		return this.getString("state");
 	}
 
-	//Setea todos los campos que corresponden al inicio de un juego.
+	/**
+     * sets the data of all the fields that corresponds to a new game.
+     * @param user_id
+     * @pre. this != null
+     * @post. the data of the fields of a new game are initiated.
+     */
 	public void setBeginning(int user_id) {
 		this.set("cantPreg",0);
     	this.set("user_id",user_id);
@@ -72,21 +77,33 @@ public class Game extends Model {
     	this.saveIt();
 	}
 
-	//Setea el estado de un juego en Game Over (para juego finalizado).
+    /**
+     * sets the game's state on "Game Over".
+     * @pre. this != null
+     * @post. the state of the current game should be "Game Over".
+     */
 	public void setStateGameOver() {
 		this.set("state","Game_Over");
 		this.saveIt();
 	}
 
-	//Incrementa en uno el contador de preguntas del juego.
+	/**
+     * This method increases the question's counter of the game.
+     * @pre. this != null
+     * @post. the question's counter of the current game should be increased by 1.
+     */
 	public void increaseNumberQuestion() {
 		this.set("cantPreg",(Integer)this.get("cantPreg")+1);
         this.saveIt();
 	}
 
-	//Se encarga de chequear si la opcion elegida por el usuario como respuesta a una pregunta es correcta o
-	//incorrecta, y asigna el puntaje correspondiente para Game y User.
-	public static void answerQuestion(int question_id, int user_id,int game_id, int option) {
+    /**
+     * This method checks if the option chosen by the user is right or not, and assigns the correspondent score to Game and User.
+     * @param question_id, user_id, game_id, option
+     * @pre. this != null
+     * @post. the correspondent score of Game and User should be increased by 1.
+     */
+    public static void answerQuestion(int question_id, int user_id,int game_id, int option) {
 		Question q = Question.findById(question_id);
 		int correctAnswer = q.getCorrectOption();
 		Game g = Game.findById(game_id);
