@@ -86,7 +86,15 @@ public class App {
             return new ModelAndView(model, "./views/sign_up_check.mustache");
         }, new MustacheTemplateEngine());
 
-        // Creacion de la sesion y retorno de VISTA DE MENU DE JUEGO en el caso que los datos de ingreso sean correctos, sino se informa el error sobre la vista de ingreso
+        /**
+         * This post method creates the session and returns the game's menu view if the username and password exists,
+         * otherwise the sign in view is returned informing the error.
+         * @param username, password.
+         * @pre. username and password should be properly formed.
+         * @return a Mustache view.
+         * @post.  The game's menu view is returned iff username and password are already in the database,
+         * if they aren't, then the sign in view must be returned showing the error.
+         */
         post("/game", (request, response) -> {
             Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
@@ -104,7 +112,12 @@ public class App {
             return new ModelAndView(model, "./views/game.mustache");
         }, new MustacheTemplateEngine());
 
-        // Retorna vista de MENU DE JUEGO ALTERNATIVA (En esta no se crea la sesion porque se ejecuta cuando ya esta creada)
+        /**
+         * get method that returns an alternative game's menu view.
+         * @pre. must be a previously created session.
+         * @return a Mustache view.
+         * @post. The game's menu view is returned.
+         */
         get("/game2", (request, response) -> {
             Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
@@ -112,7 +125,12 @@ public class App {
             return new ModelAndView(model, "./views/game.mustache");
         }, new MustacheTemplateEngine());
 
-        // Comienzo de juego: busca pregunta aleatoria y retorna la vista de juego que muestra la pregunta
+        /**
+         * In this post method the game starts. It looks for a random question and returns the view that shows the question.
+         * @pre. true.
+         * @return a Mustache view.
+         * @post.  The view that shows the question is returned.
+         */
         post("/gameStart", (request, response) -> {
             Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
@@ -131,7 +149,15 @@ public class App {
             return new ModelAndView(model, "./views/gameAsk.mustache");
         }, new MustacheTemplateEngine());
 
-        // Chequea si la respuesta es correcta o no, e incrementa los contadores correspondientes, se engarga tambien de indicar si la respuesta fue correcta o no, y en caso de ser incorrecta decir cual deberia haber sido.
+        /**
+         * This post method checks the answer. If the answer is right, the rightAnswer view is returned,
+         * otherwise the wrongAnswer view is returned. 
+         * @param user_answer
+         * @pre. the user must answer a question.
+         * @return a Mustache view.
+         * @post.  The rightAnswer view is returned iff the integer value of user_answer equals the correct option,
+         * otherwise the wrongAnswer view is returned, showing which one was the right answer.
+         */
         post("/answer", (request, response) -> {
             Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
@@ -164,7 +190,13 @@ public class App {
             }
         }, new MustacheTemplateEngine());
 
-        //Se engarga de buscar la siguiente pregunta e insertarla en el modelo, o mostrar el puntaje final en caso de haber finalizado la partida.
+        /**
+         * This post method looks for the next question if the game is not over, and the view that shows the question is returned,
+         * otherwise the gameFinished view is returned.
+         * @pre. must be a previously answered question.
+         * @return a Mustache view.
+         * @post.  The view that shows the next question is returned iff the game it's not over, otherwise the gameFinished view is returned.
+         */
         post("/nextQuestion", (request, response) -> {
             Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
