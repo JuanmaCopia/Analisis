@@ -1,49 +1,77 @@
+
 package trivia;
+
 import java.util.*;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.validation.UniquenessValidator;
 
 public class Question extends Model {
 
-  //Bloque estatico para poder utilizar los metodos de validacion correspondientes en las clases de Testing.
-  static{
-    validatePresenceOf("pregunta").message("Please, provide the question");
-    validatePresenceOf("option1").message("Please, provide the option1");
-    validatePresenceOf("option2").message("Please, provide the option2");
-    validatePresenceOf("option3").message("Please, provide the option3");
-    validatePresenceOf("option4").message("Please, provide the option4");
-    validatePresenceOf("correctOption").message("Please, provide the correct option");
-    validatePresenceOf("category_id").message("Please, provide the category id");
-    validateRange("correctOption", 1, 4).message("correctOption.outside.limits");
-    validateWith(new UniquenessValidator("pregunta")).message("This question exists already.");
-  }
+    //Bloque estatico para poder utilizar los metodos de validacion correspondientes en las clases de Testing.
+    static {
+        validatePresenceOf("pregunta").message("Please, provide the question");
+        validatePresenceOf("option1").message("Please, provide the option1");
+        validatePresenceOf("option2").message("Please, provide the option2");
+        validatePresenceOf("option3").message("Please, provide the option3");
+        validatePresenceOf("option4").message("Please, provide the option4");
+        validatePresenceOf("correctOption").message("Please, provide the correct option");
+        validatePresenceOf("category_id").message("Please, provide the category id");
+        validateRange("correctOption", 1, 4).message("correctOption.outside.limits");
+        validateWith(new UniquenessValidator("pregunta")).message("This question exists already.");
+    }
 
-  //Retorna el id de Question.
-  public int getQId(){
-    return this.getInteger("id");
-  }
+    /**
+     * returns the id of the current object.
+     * @pre. this != null
+     * @return an int value that is the id of this question.
+     * @post. the question id must be returned.
+     */
+    public int getQId() {
+        return this.getInteger("id");
+    }
 
-  //Retorna la pregunta.
-  public String getPregunta(){
-    return this.getString("pregunta");
-  }
+    /**
+     * returns the "pregunta" of the current question.
+     * @pre. this != null
+     * @return an String value that is the pregunta of this question.
+     * @post. the question's pregunta must be returned.
+     */
+    public String getPregunta() {
+        return this.getString("pregunta");
+    }
 
-  //Retorna la opcion correcta.
-  public int getCorrectOption() {
-    int resp = this.getInteger("correctOption");
-    return resp;
-  }
+    /**
+     * returns the correctOption of the current question.
+     * @pre. this != null
+     * @return an int value that is the correctOption of this question.
+     * @post. the question's correctOption must be returned.
+     */
+    public int getCorrectOption() {
+        int resp = this.getInteger("correctOption");
+        return resp;
+    }
 
-  //Retorna el nombre de la categoria que corresponda a la pregunta con la cual se invoca el metodo.
-  public String getCategoryName(){
-    int category_id = this.getInteger("category_id");
-    Category c = Category.findById(category_id);
-    return c.getString("name");
-  }
+    /**
+     * Returns the category name the question belongs to.
+     * @pre. this != null
+     * @return an String value that is the category name this question belongs to.
+     * @post. the category name this question belongs to, must be returned.
+     */
+    public String getCategoryName() {
+        int category_id = this.getInteger("category_id");
+        Category c = Category.findById(category_id);
+        return c.getString("name");
+    }
 
-  //Retorna una pregunta de manera aleatoria.
-	public static Question getRandomQuestion(int gameId){
-    List<Question> l = Question.findBySQL("select * from questions q where q.id not in (select gq.question_id from games_questions gq where game_id=" + gameId + ") order by rand() limit 1");
-    return l.get(0);
-  }
+    /**
+     * returns a not repeated random question.
+     * @param gameId
+     * @pre. this != null
+     * @return a not repeated random question.
+     * @post. a not repeated random question must be returned.
+     */
+    public static Question getRandomQuestion(int gameId) {
+        List<Question> l = Question.findBySQL("select * from questions q where q.id not in (select gq.question_id from games_questions gq where game_id=" + gameId + ") order by rand() limit 1");
+        return l.get(0);
+    }
 }
