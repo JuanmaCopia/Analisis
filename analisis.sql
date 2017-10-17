@@ -23,7 +23,7 @@ insert into questions (pregunta,option1,option2,option3,option4,correctOption,ca
 ("¿Quién es la mascota de SEGA?","Mario","Pacman","Ryu","Sonic",4,7);
 
 
-insert into categories (name) values 
+insert into categories (name) values
 ("Geografia"),
 ("Matematica"),
 ("Deporte"),
@@ -38,5 +38,14 @@ insert into users (username,password,email,rightAnswers,wrongAnswers,admin) valu
 ("pepe","seba","pepe@gmail.com",66,0,false),
 ("jose","seba","jose@gmail.com",54,0,false),
 ("cacho","cacho","cacho@gmail.com",125,0,false);
+
+insert into tables (owner_id,guest_id,is_full) values
+(2,1,true),
+(3,4,true),
+(1,2,true),
+(3,4,true),
+(3,4,true),
+(3,4,true),
+(3,4,true);
 
 select * from users

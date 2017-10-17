@@ -8,17 +8,19 @@
 </head>
 
 <body>
-
 	<div class="container">
 
 		<div class="header">
-    		<h1>Pregunta2</h1>
-    	</div>
+    	<h1>Pregunta2</h1>
+    </div>
 
 		<div class="main">
-		    <form action="/gameStart" method="post">
-				<input type="submit" value="Jugar">
+		  <form action="/gameStart" method="post">
+				<input type="submit" value="Un Jugador">
 			</form>
+      <form action="/joinRoom" method="get">
+        <input type="submit" value="Dos Jugadores">
+      </form>
 			<form action="/ranking" method="get">
 				<input type="submit" value="Ver Ranking">
 			</form>
@@ -28,9 +30,7 @@
 		</div>
 
     	<img src="./images/2.png">
-    
 	</div>
-
 </body>
 
 </html>
