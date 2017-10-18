@@ -27,10 +27,10 @@ public class App {
 
     //Sends a message from one user to all users, along with a list of current usernames
     public static void refreshTables(String sender, String message) {
-        List<Table> li = Table.findAll();
+        List<Table> list = Table.findAll();
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
-                session.getRemote().sendString(new Gson().toJson(li));
+                session.getRemote().sendString(new Gson().toJson(list));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -280,16 +280,21 @@ public class App {
 
 
         get("/user", "application/json", (request, response) -> {
+            response.type("application/json");
             int user_id = request.session().attribute("user_id");
             User u = User.findById(user_id);
-            return new MyMessage("Hello World");
-        }, new JsonTransformer());
+
+            //return new Gson().toJson(new StandardResponse("Success",u.toJson()));
+            return u.toJson();
+        });
+
         /*
-        get("/hello", (req, res) -> "Hello World");
-
-        post("/init", (req, res) -> new Gson().toJson(controlador.crearTablero(req,res)));
-
-        after((req, res) -> {res.type("application/json");});
+        get("/users", (request, response) -> {
+            response.type("application/json");
+            return new Gson().toJson(
+            new StandardResponse(StatusResponse.SUCCESS,new Gson()
+            .toJsonTree(userService.getUsers())));
+        });
         */
     }
 }
