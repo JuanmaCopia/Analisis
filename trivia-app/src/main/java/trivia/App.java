@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONObject;
-import com.google.gson.Gson;
+import org.json.JSONArray;
 
 import static j2html.TagCreator.*;
 
@@ -26,11 +26,21 @@ public class App {
 
 
     //Sends a message from one user to all users, along with a list of current usernames
-    public static void refreshTables(String sender, String message) {
-        List<Table> list = Table.findAll();
+    public static void refreshTables() {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+
+        JSONArray tableArray = new JSONArray();
+        List<Table> tablesList = Table.findAll();
+
+        for(Table t: tablesList){
+            tableArray.put(t.toJson());
+        }
+        Base.close();
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
-                session.getRemote().sendString(new Gson().toJson(list));
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("tableList", tableArray)
+                ));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -41,7 +51,7 @@ public class App {
 
         staticFileLocation("/public");
 
-        webSocket("/room", RoomWebSocketHandler.class);
+        webSocket("/lobbyy", LobbyWebSocketHandler.class);
 
         before((req, res)->{
             Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
@@ -273,9 +283,9 @@ public class App {
             return new ModelAndView(model, "./views/index.mustache");
         }, new MustacheTemplateEngine());
 
-        get("/joinRoom", (req,res) -> {
+        get("/lobby", (req,res) -> {
             Map<String, Object> model = new HashMap();
-            return new ModelAndView(model, "./views/room.mustache");
+            return new ModelAndView(model, "./views/lobby.mustache");
         },new MustacheTemplateEngine());
 
 
@@ -283,8 +293,6 @@ public class App {
             response.type("application/json");
             int user_id = request.session().attribute("user_id");
             User u = User.findById(user_id);
-
-            //return new Gson().toJson(new StandardResponse("Success",u.toJson()));
             return u.toJson();
         });
 
