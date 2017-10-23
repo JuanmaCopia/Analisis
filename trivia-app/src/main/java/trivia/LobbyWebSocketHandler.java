@@ -4,6 +4,7 @@ import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.json.JSONObject;
 import org.javalite.activejdbc.Base;
+import java.util.*;
 
 @WebSocket
 public class LobbyWebSocketHandler {
@@ -24,18 +25,30 @@ public class LobbyWebSocketHandler {
     }
 
     @OnWebSocketMessage
-    public void onMessage(String message) {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+    public void onMessage(Session user,String message) {
         JSONObject task = new JSONObject(message);
+        int userId,tableId,ownerId,guestId;
         String description = new String(task.getString("description"));
         switch (description) {
             case "createTable":
-                Table newTable = new Table();
-                newTable.initialize(task.getInt("owner_id"));
-                Base.close();
-                App.refreshTables();
+                userId = task.getInt("owner_id");
+                Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+                List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+                if (tablesList.isEmpty()) {
+                    Table newTable = new Table();
+                    newTable.initialize(userId);
+                    Base.close();
+                    App.sendCreatedTable(newTable);
+                }
+                else {
+                    Base.close();
+                    App.tableCreationError(user);
+                }
                 break;
-            case "asd":
+            case "deleteTable":
+                // deberia chequear que el usuario es efectivamente el dueño de la mesa
+                tableId = task.getInt("table_id");
+                App.sendDeletedTable(tableId);
                 break;
             case "asda":
                 break;

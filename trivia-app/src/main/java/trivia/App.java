@@ -24,7 +24,6 @@ public class App {
     static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
     static int nextUserNumber = 1; //Assign to username for next connecting user
 
-
     //Sends a message from one user to all users, along with a list of current usernames
     public static void refreshTables() {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
@@ -39,12 +38,57 @@ public class App {
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","refreshTables")
                     .put("tableList", tableArray)
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public static void sendCreatedTable(Table table) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        JSONObject jsonTable = table.toJson();
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","displayCreatedTable")
+                    .put("newTable", jsonTable)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void sendDeletedTable(int tableId) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Table table = Table.findById(tableId);
+        JSONObject deletedTable = table.toJson();
+        table.deleteCascadeShallow();
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","tableDeleted")
+                    .put("deletedTable",deletedTable)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void tableCreationError(Session userSession) {
+        try {
+            userSession.getRemote().sendString(String.valueOf(new JSONObject()
+                .put("task","creationError")
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main( String[] args ) {
@@ -283,8 +327,23 @@ public class App {
             return new ModelAndView(model, "./views/index.mustache");
         }, new MustacheTemplateEngine());
 
-        get("/lobby", (req,res) -> {
-            Map<String, Object> model = new HashMap();
+        get("/lobby", (request,response) -> {
+            Map model = new HashMap();
+            int userId = request.session().attribute("user_id");
+            User u = User.findById(userId);
+            String username = u.getString("username");
+            model.put("user_id",userId);
+            model.put("username",username);
+            List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+            if (!tablesList.isEmpty()) {
+                Table t = tablesList.get(0);
+                model.put("in_table","true");
+                model.put("table_id",t.getInteger("id"));
+                if (userId == t.getInteger("owner_id"))
+                    model.put("is_owner","true");
+                else
+                    model.put("is_owner","false");
+            }
             return new ModelAndView(model, "./views/lobby.mustache");
         },new MustacheTemplateEngine());
 
@@ -296,13 +355,5 @@ public class App {
             return u.toJson();
         });
 
-        /*
-        get("/users", (request, response) -> {
-            response.type("application/json");
-            return new Gson().toJson(
-            new StandardResponse(StatusResponse.SUCCESS,new Gson()
-            .toJsonTree(userService.getUsers())));
-        });
-        */
     }
 }

@@ -2,11 +2,11 @@ package trivia;
 
 import java.util.*;
 import org.javalite.activejdbc.Model;
+import org.javalite.activejdbc.Base;
 
 import org.json.JSONObject;
 
 public class Table extends Model {
-
 
     public JSONObject toJson() {
         int guestId;
