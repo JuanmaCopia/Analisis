@@ -1,10 +1,10 @@
 
 // Templates
 var HTMLCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr></table>';
-var HTMLIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th><button id="entrar">Entrar</button></th></tr></table>';
+var HTMLIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th><button id="entrar" class="%id%" onclick="joinTable(%id%)">Entrar</button></th></tr></table>';
 var HTMLUserIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>Esperando</th></tr><tr><td></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td></tr></table>';
 var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick">Expulsar Jugador</button></td></tr></table>';
-
+var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="exitTable()">Salir</button></td></tr></table>'
 // Variables
 var user;
 var sittedTable = null;
@@ -97,6 +97,7 @@ webSocket.onmessage = function (msg) {
 // Actions to execute when a the websocket connection is closed.
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 
+// Adds an onclick event to the create Table button
 id("createTable").addEventListener("click", function () {
     if (sittedTable == null) {
         if (errorIsDisplayed) {
@@ -124,6 +125,22 @@ function sendDeleteTable() {
     task.table_id = sittedTable.getId();
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
+}
+
+// This function is executed when the user wants to join to a table.
+// sends the delete table task, with this user id
+function joinTable(elemTable) {
+    console.log(elemTable);
+    /*
+    var id = elemTable.className;
+    console.log("el id de la mesa es:"+id);*/
+    /*
+    if (sittedTable == null) {
+        var task = new Task("joinTable");
+        task.table_id = tableId;
+        var jsonStringTask = JSON.stringify(task);
+        webSocket.send(jsonStringTask);
+    }*/
 }
 
 // display an error message
@@ -161,7 +178,6 @@ function displayAllTables(data) {
 
 // Display the created table
 function displayCreatedTable(data) {
-    console.log(data);
     insert("column"+nextColumn.toString(),createHTMLTable(data));
     switch(nextColumn) {
         case 1:
@@ -216,10 +232,18 @@ function createHTMLTable(table) {
             result = result.replace("%id%",table.id);
         }
         else {
-            result = HTMLCompleteTable;
-            result = result.replace("%owner%",table.owner_username);
-            result = result.replace("%guest%",table.guest_username);
-            result = result.replace("%id%",table.id);
+            if (table.guest_id == user.getId()) {
+                result = HTMLCompleteTableAsGuest;
+                result = result.replace("%owner%",table.owner_username);
+                result = result.replace("%guest%",table.guest_username);
+                result = result.replace("%id%",table.id);
+            }
+            else {
+                result = HTMLCompleteTable;
+                result = result.replace("%owner%",table.owner_username);
+                result = result.replace("%guest%",table.guest_username);
+                result = result.replace("%id%",table.id);
+            }
         }
     }
     else {
@@ -231,6 +255,8 @@ function createHTMLTable(table) {
         else {
             result = HTMLIncompleteTable;
             result = result.replace("%owner%",table.owner_username);
+            result = result.replace("%id%",table.id);
+            result = result.replace("%id%",table.id);
             result = result.replace("%id%",table.id);
         }
     }
@@ -294,6 +320,21 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
         <td><button id="kick">Expulsar Jugador</button></td>
     </tr>
 </table>
+
+<table id="table%id%">
+    <tr>
+        <th>%owner%</th>
+        <th>VS</th>
+        <th>%guest%</th>
+    </tr>
+    <tr>
+        <td></td>
+        <td><button id="exit">Salir</button></td>
+    </tr>
+</table>
+
+<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit">Salir</button></td></tr></table>
+
 
 <table id="table">
     <tr>
