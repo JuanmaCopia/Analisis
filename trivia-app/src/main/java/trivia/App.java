@@ -7,11 +7,103 @@ import static spark.Spark.*;
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.eclipse.jetty.websocket.api.Session;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
+import static j2html.TagCreator.*;
+
 public class App {
+
+    // this map is shared between sessions and threads, so it needs to be thread-safe (http://stackoverflow.com/a/2688817)
+    static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
+    static int nextUserNumber = 1; //Assign to username for next connecting user
+
+    //Sends a message from one user to all users, along with a list of current usernames
+    public static void refreshTables() {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+
+        JSONArray tableArray = new JSONArray();
+        List<Table> tablesList = Table.findAll();
+
+        for(Table t: tablesList){
+            tableArray.put(t.toJson());
+        }
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","refreshTables")
+                    .put("tableList", tableArray)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void sendCreatedTable(Table table) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        JSONObject jsonTable = table.toJson();
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","displayCreatedTable")
+                    .put("newTable", jsonTable)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void sendDeletedTable(int tableId) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Table table = Table.findById(tableId);
+        JSONObject deletedTable = table.toJson();
+        table.deleteCascadeShallow();
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","tableDeleted")
+                    .put("deletedTable",deletedTable)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public static void tableCreationError(Session userSession) {
+        try {
+            userSession.getRemote().sendString(String.valueOf(new JSONObject()
+                .put("task","creationError")
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main( String[] args ) {
 
         staticFileLocation("/public");
+
+        webSocket("/lobbyy", LobbyWebSocketHandler.class);
+
+        before((req, res)->{
+            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        });
+
+        after((req, res) -> {
+            Base.close();
+        });
 
         /**
          * get method that returns the index view.
@@ -56,33 +148,28 @@ public class App {
          * if they are, then the sign up view must be returned showing the error.
          */
         post("/sign_up_check", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
             String username = request.queryParams("username");
             List<User> p = User.where("username = '" + username + "'");
             if (p.size()!=0) {
                 model.put("error", "El usuario " + username + " ya existe.");
-                Base.close();
                 return new ModelAndView(model, "./views/sign_up.mustache");
             }
             String password = request.queryParams("password");
             String passwordRep = request.queryParams("passwordRep");
             if (!password.equals(passwordRep)) {
                 model.put("error", "Las contraseñas ingresadas no coinciden.");
-                Base.close();
                 return new ModelAndView(model, "./views/sign_up.mustache");
             }
             String email = request.queryParams("email");
             p = User.where("email = '" + email + "'");
             if (p.size()!=0) {
                 model.put("error", "Ya existe un usuario registrado con este e-mail.");
-                Base.close();
                 return new ModelAndView(model, "./views/sign_up.mustache");
             }
             User u = new User();
             u.setSignUpData(username, password, email);
             model.put("username",request.queryParams("username"));
-            Base.close();
             return new ModelAndView(model, "./views/sign_up_check.mustache");
         }, new MustacheTemplateEngine());
 
@@ -96,19 +183,16 @@ public class App {
          * if they aren't, then the sign in view must be returned showing the error.
          */
         post("/game", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
             String username = request.queryParams("username");
             String password = request.queryParams("password");
             List<User> l = User.where("username = ? and password = ?",username,password);
             if (l.isEmpty()) {
             	model.put("error","Nombre de usuario o contraseña invalido/s.");
-            	Base.close();
             	return new ModelAndView(model,"./views/sign_in.mustache");
             }
             request.session(true);
             request.session().attribute("user_id",l.get(0).getInteger("id"));
-            Base.close();
             return new ModelAndView(model, "./views/game.mustache");
         }, new MustacheTemplateEngine());
 
@@ -119,9 +203,7 @@ public class App {
          * @post. The game's menu view is returned.
          */
         get("/game2", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
-            Base.close();
             return new ModelAndView(model, "./views/game.mustache");
         }, new MustacheTemplateEngine());
 
@@ -132,7 +214,6 @@ public class App {
          * @post.  The view that shows the question is returned.
          */
         post("/gameStart", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
             Game g = new Game();
             g.setBeginning(request.session().attribute("user_id"));
@@ -145,13 +226,12 @@ public class App {
             model.put("option2",q.getString("option2"));
             model.put("option3",q.getString("option3"));
             model.put("option4",q.getString("option4"));
-            Base.close();
             return new ModelAndView(model, "./views/gameAsk.mustache");
         }, new MustacheTemplateEngine());
 
         /**
          * This post method checks the answer. If the answer is right, the rightAnswer view is returned,
-         * otherwise the wrongAnswer view is returned. 
+         * otherwise the wrongAnswer view is returned.
          * @param user_answer
          * @pre. the user must answer a question.
          * @return a Mustache view.
@@ -159,7 +239,6 @@ public class App {
          * otherwise the wrongAnswer view is returned, showing which one was the right answer.
          */
         post("/answer", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
             int ansNum = Integer.parseInt(request.queryParams("user_answer"));
             int userId = request.session().attribute("user_id");
@@ -171,7 +250,6 @@ public class App {
             Question q = Question.findById(quesId);
             int correctOption = q.getCorrectOption();
             if (correctOption == ansNum) {
-                Base.close();
                 return new ModelAndView(model, "./views/rightAnswer.mustache");
             }
             else {
@@ -185,7 +263,6 @@ public class App {
                     case 4: model.put("correctOp", q.getString("option4"));
                             break;
                 }
-                Base.close();
                 return new ModelAndView(model, "./views/wrongAnswer.mustache");
             }
         }, new MustacheTemplateEngine());
@@ -198,7 +275,6 @@ public class App {
          * @post.  The view that shows the next question is returned iff the game it's not over, otherwise the gameFinished view is returned.
          */
         post("/nextQuestion", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
             int gameId = request.session().attribute("game_id");
             Game g = Game.findById(gameId);
@@ -207,7 +283,6 @@ public class App {
                 g.setStateGameOver();
                 model.put("rightAnswers", g.getRightAnswers());
                 model.put("wrongAnswers", g.getWrongAnswers());
-                Base.close();
                 return new ModelAndView(model, "./views/gameFinished.mustache");
             }
             Question q = Question.getRandomQuestion(gameId);
@@ -218,7 +293,6 @@ public class App {
             model.put("option2",q.getString("option2"));
             model.put("option3",q.getString("option3"));
             model.put("option4",q.getString("option4"));
-            Base.close();
             return new ModelAndView(model, "./views/gameAsk.mustache");
         }, new MustacheTemplateEngine());
 
@@ -229,12 +303,10 @@ public class App {
          * @post. The ranking view is returned.
          */
         get("/ranking", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
             List<User> ranking = User.findBySQL("SELECT * FROM users ORDER BY rightAnswers DESC LIMIT 10");
             User u = ranking.get(0);
             model.put("top10",ranking);
-            Base.close();
             return new ModelAndView(model, "./views/rankingView.mustache");
         }, new MustacheTemplateEngine());
 
@@ -245,7 +317,6 @@ public class App {
          * @post. The index view is returned.
          */
         post("/logOut", (request, response) -> {
-            Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
             Map model = new HashMap();
             if (request.session().attribute("user_id") != null)
                 request.session().removeAttribute("user_id");
@@ -253,8 +324,36 @@ public class App {
             	request.session().removeAttribute("game_id");
             if (request.session().attribute("question_id") != null)
             	request.session().removeAttribute("question_id");
-            Base.close();
             return new ModelAndView(model, "./views/index.mustache");
         }, new MustacheTemplateEngine());
+
+        get("/lobby", (request,response) -> {
+            Map model = new HashMap();
+            int userId = request.session().attribute("user_id");
+            User u = User.findById(userId);
+            String username = u.getString("username");
+            model.put("user_id",userId);
+            model.put("username",username);
+            List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+            if (!tablesList.isEmpty()) {
+                Table t = tablesList.get(0);
+                model.put("in_table","true");
+                model.put("table_id",t.getInteger("id"));
+                if (userId == t.getInteger("owner_id"))
+                    model.put("is_owner","true");
+                else
+                    model.put("is_owner","false");
+            }
+            return new ModelAndView(model, "./views/lobby.mustache");
+        },new MustacheTemplateEngine());
+
+
+        get("/user", "application/json", (request, response) -> {
+            response.type("application/json");
+            int user_id = request.session().attribute("user_id");
+            User u = User.findById(user_id);
+            return u.toJson();
+        });
+
     }
 }

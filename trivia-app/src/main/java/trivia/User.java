@@ -5,6 +5,8 @@ import java.util.*;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.validation.UniquenessValidator;
 
+import org.json.JSONObject;
+
 public class User extends Model {
 
     //Bloque estatico para poder utilizar los metodos de validacion correspondientes en las clases de Testing.
@@ -15,6 +17,14 @@ public class User extends Model {
         validateEmailOf("email");
         validateWith(new UniquenessValidator("username")).message("This username is already taken.");
         validateWith(new UniquenessValidator("email")).message("This email is already taken.");
+    }
+
+
+    public JSONObject toJson() {
+        JSONObject result = new JSONObject();
+        result.put("user_id",this.getInteger("id"));
+        result.put("username",this.getString("username"));
+        return result;
     }
 
     /**
