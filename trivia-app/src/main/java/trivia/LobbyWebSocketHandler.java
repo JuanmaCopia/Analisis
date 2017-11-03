@@ -1,3 +1,6 @@
+/**
+ * lobby webSocket controller.
+*/
 package trivia;
 
 import org.eclipse.jetty.websocket.api.*;
@@ -11,6 +14,9 @@ public class LobbyWebSocketHandler {
 
     private String sender, msg;
 
+    /**
+     * Actions to perform when a user connects to the server
+    */
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
         String username = "User" + App.nextUserNumber++;
@@ -18,12 +24,17 @@ public class LobbyWebSocketHandler {
         App.refreshTables();
     }
 
+    /**
+     * Actions to perform when a user disconnects from the server
+    */
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
         String username = App.userUsernameMap.get(user);
         App.userUsernameMap.remove(user);
     }
-
+    /**
+     * Actions to perform when a message from the client arrives.
+    */
     @OnWebSocketMessage
     public void onMessage(Session user,String message) {
         JSONObject task = new JSONObject(message);

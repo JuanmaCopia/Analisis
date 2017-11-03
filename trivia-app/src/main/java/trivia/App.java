@@ -20,17 +20,20 @@ import static j2html.TagCreator.*;
 
 public class App {
 
-    // this map is shared between sessions and threads, so it needs to be thread-safe (http://stackoverflow.com/a/2688817)
+    // this map is shared between sessions and threads, so it needs to be thread-safe
     static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
     static int nextUserNumber = 1; //Assign to username for next connecting user
 
-    //Sends a message from one user to all users, along with a list of current usernames
+    /**
+     * This method send all tables to every active users.
+     * @pre. true.
+     * @return A String that represents a json object containing all the tables and a task identifier.
+     * @post. All database existing tables should be returned to all active users.
+    */
     public static void refreshTables() {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-
         JSONArray tableArray = new JSONArray();
         List<Table> tablesList = Table.findAll();
-
         for(Table t: tablesList){
             tableArray.put(t.toJson());
         }
@@ -47,6 +50,13 @@ public class App {
         });
     }
 
+    /**
+     * This method send the created table to all users.
+     * @param a Table object.
+     * @pre. table != null.
+     * @return A String that represents a json object containing the new created table.
+     * @post. the table should be returned to all active users.
+    */
     public static void sendCreatedTable(Table table) {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         JSONObject jsonTable = table.toJson();
@@ -63,6 +73,13 @@ public class App {
         });
     }
 
+    /**
+     * This method send the deleted table to all users.
+     * @param an int that is the table id.
+     * @pre. the table to be deleted should exist in database.
+     * @return A String that represents a json object containing the deleted table.
+     * @post. the deleted table should be returned to all active users.
+    */
     public static void sendDeletedTable(int tableId) {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         Table table = Table.findById(tableId);
@@ -81,6 +98,13 @@ public class App {
         });
     }
 
+    /**
+     * This method inform about a error on creating a new table.
+     * @param The session from the user that tried to create a new table.
+     * @pre. true.
+     * @return A String that represents a json object containing task identifier.
+     * @post. the message should be returned only to the user of the session.
+    */
     public static void tableCreationError(Session userSession) {
         try {
             userSession.getRemote().sendString(String.valueOf(new JSONObject()
@@ -327,6 +351,12 @@ public class App {
             return new ModelAndView(model, "./views/index.mustache");
         }, new MustacheTemplateEngine());
 
+        /**
+         * get method that returns the lobby view.
+         * @pre. must be a previously created session.
+         * @return a Mustache view.
+         * @post. The lobby view is returned.
+         */
         get("/lobby", (request,response) -> {
             Map model = new HashMap();
             int userId = request.session().attribute("user_id");
@@ -346,14 +376,5 @@ public class App {
             }
             return new ModelAndView(model, "./views/lobby.mustache");
         },new MustacheTemplateEngine());
-
-
-        get("/user", "application/json", (request, response) -> {
-            response.type("application/json");
-            int user_id = request.session().attribute("user_id");
-            User u = User.findById(user_id);
-            return u.toJson();
-        });
-
     }
 }

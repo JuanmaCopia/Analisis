@@ -1,62 +1,57 @@
 
+// Templates
 var HTMLCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr></table>';
 var HTMLIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th><button id="entrar">Entrar</button></th></tr></table>';
 var HTMLUserIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>Esperando</th></tr><tr><td></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td></tr></table>';
 var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick">Expulsar Jugador</button></td></tr></table>';
 
+// Variables
 var user;
 var sittedTable = null;
 var nextColumn = 1;
 var errorIsDisplayed = false;
 
+// Task constructor
 function Task(description) {
     this.description = description;
 }
-
+// Table constructor
 function Table(id,isOwner) {
     this.id = id;
     this.isOwner = isOwner;
 }
-
+// Table function: returns the table id.
 Table.prototype.getId = function() {
     return this.id;
 };
 
+// Table function: returns if this user is the owner of the table or not.
 Table.prototype.isOwner = function() {
     return this.isOwner;
 };
 
+// User constructor
 function User(id,username) {
     this.id = id;
     this.username = username;
 }
 
+// User function: returns the user id.
 User.prototype.getId = function() {
     return this.id;
 };
 
+// User function: returns the user username.
 User.prototype.getUsername = function() {
     return this.username;
 };
-/*
-function getUser() {
-    $.ajax({
-        type: "GET",
-        url: "/user",
-        success : function(data) {
-            user = new User(data.user_id,data.username);
-        }
-    });
-}
 
-$(document).ready(getUser);
-*/
-
+// recovers the user information and initialize the user variable with that data.
 function setUser() {
     user = new User(id("idh").innerHTML,id("nameh").innerHTML);
 }
-
-function getTable() {
+// recovers the table information, if the user is in a table it initializes the sittedTable variable with that data.
+function setTable() {
     if (id("in_tableh").innerHTML == "true") {
         if (id("is_ownerh").innerHTML == "true")
             sittedTable = new Table(id("table_idh").innerHTML,true);
@@ -65,9 +60,13 @@ function getTable() {
     }
 }
 
+// function to execute when the document is ready
 $(document).ready(setUser);
+
 //Establish the WebSocket connection and set up event handlers
 var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/lobbyy");
+
+// Actions to execute when a message is received.
 webSocket.onmessage = function (msg) {
     var data = JSON.parse(msg.data);
     switch(data.task) {
@@ -75,7 +74,7 @@ webSocket.onmessage = function (msg) {
             if (user == null)
                 setUser();
             if (sittedTable == null)
-                getTable();
+                setTable();
             displayAllTables(data);
 
         break;
@@ -95,6 +94,7 @@ webSocket.onmessage = function (msg) {
     }
 };
 
+// Actions to execute when a the websocket connection is closed.
 webSocket.onclose = function () { alert("WebSocket connection closed") };
 
 id("createTable").addEventListener("click", function () {
@@ -109,13 +109,16 @@ id("createTable").addEventListener("click", function () {
     }
 });
 
+// This function is executed when the user wants to create a table.
+// sends the create table task, with this user id
 function sendTable() {
     var task = new Task("createTable");
     task.owner_id = user.getId();
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
 }
-
+// This function is executed when the user wants to delete his table.
+// sends the delete table task, with this user id
 function sendDeleteTable() {
     var task = new Task("deleteTable");
     task.table_id = sittedTable.getId();
@@ -123,16 +126,18 @@ function sendDeleteTable() {
     webSocket.send(jsonStringTask);
 }
 
+// display an error message
 function displayError(message) {
     errorIsDisplayed = true;
     id("error").innerHTML = message;
 }
 
+// erase the error message
 function eraseError() {
     id("error").innerHTML = "";
 }
 
-
+// Display all tables
 function displayAllTables(data) {
     console.log(data);
     id("column1").innerHTML = "";
@@ -154,6 +159,7 @@ function displayAllTables(data) {
     });
 }
 
+// Display the created table
 function displayCreatedTable(data) {
     console.log(data);
     insert("column"+nextColumn.toString(),createHTMLTable(data));
@@ -170,6 +176,7 @@ function displayCreatedTable(data) {
     }
 }
 
+// Creates the new table
 function createTable(table) {
     var thisUserId = user.getId();
     if (thisUserId == table.owner_id) {
@@ -182,6 +189,7 @@ function createTable(table) {
     }
 }
 
+// Deletes this user table
 function deleteTable(table) {
     var thisUserId = user.getId();
     if (sittedTable!= null) {
@@ -192,10 +200,12 @@ function deleteTable(table) {
     }
 }
 
+// remove a table from the view
 function removeDeletedTable(data) {
     $("#table"+data.id).remove();
 }
 
+// creates the html table.
 function createHTMLTable(table) {
     var result;
     if (table.is_full == true) {
@@ -227,11 +237,12 @@ function createHTMLTable(table) {
     return result;
 }
 
+// inserts a message (html format string) at the begining of a html element
 function insert(targetId, message) {
     id(targetId).insertAdjacentHTML("afterbegin", message);
 }
 
-//Helper function for selecting element by id
+// Helper function for selecting element by id
 function id(id) {
     return document.getElementById(id);
 }
