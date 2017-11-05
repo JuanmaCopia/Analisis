@@ -50,6 +50,7 @@ public class LobbyWebSocketHandler {
                     newTable.initialize(userId);
                     Base.close();
                     App.sendCreatedTable(newTable);
+                    App.refreshTables();
                 }
                 else {
                     Base.close();
@@ -60,10 +61,40 @@ public class LobbyWebSocketHandler {
                 // deberia chequear que el usuario es efectivamente el dueño de la mesa
                 tableId = task.getInt("table_id");
                 App.sendDeletedTable(tableId);
+                App.refreshTables();
                 break;
-            case "asda":
+            case "joinTable":
+                guestId = task.getInt("guest_id");
+                tableId = task.getInt("table_id");
+                Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+                Table table = Table.findById(tableId);
+                table.setGuestUser(guestId);
+                Base.close();
+                App.userJoinedTable(table);
+                App.refreshTables();
                 break;
-            case "asdasd":
+            case "guestLeft":
+                tableId = task.getInt("table_id");
+                Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+                Table table2 = Table.findById(tableId);
+                table2.deleteGuestUser();
+                Base.close();
+                App.guestLeftTable(table2);
+                App.refreshTables();
+                break;
+            case "startGame":
+                tableId = task.getInt("table_id");
+                Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+                Table table3 = Table.findById(tableId);
+                Match m = new Match();
+                m.setMatchBeginning(table3.getOwnerId(),table3.getGuestId());
+                Base.close();
+                App.sendMatchQuestions(m.getMId());
+                App.refreshTables();
+                break;
+            case "checkAnswer":
+                break;
+            case "checkGameStatus":
                 break;
             default:
         }
