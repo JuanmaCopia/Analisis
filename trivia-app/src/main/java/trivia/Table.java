@@ -38,6 +38,26 @@ public class Table extends Model {
         this.saveIt();
     }
 
+    /**
+     * returns the owner's id of the current object.
+     * @pre. this != null
+     * @return an int value that is the owner_id of this table.
+     * @post. the owner_id of the table must be returned.
+     */
+    public int getOwnerId() {
+        return this.getInteger("owner_id");
+    }
+
+    /**
+     * returns the guest's id of the current object.
+     * @pre. this != null
+     * @return an int value that is the guest_id of this table.
+     * @post. the guest_id of the table must be returned.
+     */
+    public int getGuestId() {
+        return this.getInteger("guest_id");
+    }
+
     public void setOwnerUser(int ownerId) {
         this.set("owner_id",ownerId);
         this.saveIt();
@@ -48,6 +68,12 @@ public class Table extends Model {
         this.set("is_full",true);
         this.saveIt();
     }
+
+    public void deleteGuestUser() {
+        this.set("guest_id",null);
+        this.set("is_full",false);
+        this.saveIt();
+    }    
 
     public void deleteTable() {
         this.deleteCascade();
