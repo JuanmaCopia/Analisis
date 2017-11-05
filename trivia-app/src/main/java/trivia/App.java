@@ -115,6 +115,75 @@ public class App {
         }
     }
 
+    /**
+     * This method sends the table with the guest user joined to all users.
+     * @param a Table object.
+     * @pre. table != null.
+     * @return A String that represents a json object containing the table with the guest user joined.
+     * @post. the table should be returned to all active users.
+    */
+    public static void userJoinedTable(Table table) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        JSONObject jsonTable = table.toJson();
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","userJoined")
+                    .put("table", jsonTable)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * This method sends the table with the guest user gone to all users.
+     * @param a Table object.
+     * @pre. table != null.
+     * @return A String that represents a json object containing the table with the guest user gone.
+     * @post. the table should be returned to all active users.
+    */
+    public static void guestLeftTable(Table table) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        JSONObject jsonTable = table.toJson();
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","userLeftTable")
+                    .put("table", jsonTable)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    /**
+     * This method sends the match questions to every active users.
+     * @pre. true.
+     * @return A String that represents a json object containing .
+     * @post. All database existing tables should be returned to all active users.
+    */
+    public static void sendMatchQuestions(int match_id) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        JSONArray questionsArray = Question.getMatchQuestions();
+        Base.close();
+        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+            try {
+                session.getRemote().sendString(String.valueOf(new JSONObject()
+                    .put("task","gameQuestions")
+                    .put("questionsList", questionsArray)
+                    .put("match_id", match_id)
+                ));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public static void main( String[] args ) {
 
         staticFileLocation("/public");
