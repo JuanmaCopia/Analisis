@@ -1,10 +1,10 @@
 
 // Templates
 var HTMLCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr></table>';
-var HTMLIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th><button id="entrar" class="%id%" onclick="joinTable(%id%)">Entrar</button></th></tr></table>';
+var HTMLIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th><button id="entrar" onclick="sendJoinTable(%id%)">Entrar</button></th></tr></table>';
 var HTMLUserIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>Esperando</th></tr><tr><td></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td></tr></table>';
-var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick">Expulsar Jugador</button></td></tr></table>';
-var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="exitTable()">Salir</button></td></tr></table>'
+var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start" onclick="sendStartGame(%id%)">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick" onclick="sendKickPlayer(%id%)">Expulsar Jugador</button></td></tr></table>';
+var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="sendExitTable(%id%)">Salir</button></td></tr></table>'
 // Variables
 var user;
 var sittedTable = null;
@@ -89,6 +89,22 @@ webSocket.onmessage = function (msg) {
             deleteTable(data.deletedTable);
             removeDeletedTable(data.deletedTable);
         break;
+        case "userJoined":
+            if (data.table.guest_id == user.id) {
+                sittedTable = new Table(data.table_id,false);
+            }
+        break;
+        case "userLeftTable":
+            if (data.table.guest_id == user.id) {
+                sittedTable = new Table(data.table_id,false);
+            }
+        break;
+        case "userKickedFromTable":
+
+        break;
+        case "gameQuestions":
+
+        break;
         default:
             displayError('Error desconocido');
     }
@@ -128,20 +144,48 @@ function sendDeleteTable() {
 }
 
 // This function is executed when the user wants to join to a table.
-// sends the delete table task, with this user id
-function joinTable(elemTable) {
-    console.log(elemTable);
-    /*
-    var id = elemTable.className;
-    console.log("el id de la mesa es:"+id);*/
-    /*
+// sends the join table task, with the table id
+function sendJoinTable(tableId) {
+    console.log("entras a la mesa "+tableId);
     if (sittedTable == null) {
         var task = new Task("joinTable");
         task.table_id = tableId;
         var jsonStringTask = JSON.stringify(task);
         webSocket.send(jsonStringTask);
-    }*/
+    }
 }
+
+// This function is executed when the user wants to leave a table.
+// sends the exit table task, with the table id
+function sendExitTable(tableId) {
+    console.log("salis de la mesa "+tableId);
+    var task = new Task("exitTable");
+    task.table_id = tableId;
+    var jsonStringTask = JSON.stringify(task);
+    webSocket.send(jsonStringTask);
+}
+
+// This function is executed when the owner kick a player from his table.
+// sends the kick player task, with the table id
+function sendKickPlayer(tableId) {
+    console.log("kickeando guest de la mesa "+tableId);
+    var task = new Task("kickPlayer");
+    task.table_id = tableId;
+    var jsonStringTask = JSON.stringify(task);
+    webSocket.send(jsonStringTask);
+}
+
+// This function is executed when the owner start the game with another player.
+// sends the start game task, with the table id
+function sendStartGame(tableId) {
+    console.log("comenzando juego de la mesa "+tableId);
+    var task = new Task("startGame");
+    task.table_id = tableId;
+    var jsonStringTask = JSON.stringify(task);
+    webSocket.send(jsonStringTask);
+}
+
+
 
 // display an error message
 function displayError(message) {
@@ -156,7 +200,6 @@ function eraseError() {
 
 // Display all tables
 function displayAllTables(data) {
-    console.log(data);
     id("column1").innerHTML = "";
     id("column2").innerHTML = "";
     id("column3").innerHTML = "";
@@ -230,12 +273,15 @@ function createHTMLTable(table) {
             result = result.replace("%owner%",table.owner_username);
             result = result.replace("%guest%",table.guest_username);
             result = result.replace("%id%",table.id);
+            result = result.replace("%id%",table.id);
+            result = result.replace("%id%",table.id);
         }
         else {
             if (table.guest_id == user.getId()) {
                 result = HTMLCompleteTableAsGuest;
                 result = result.replace("%owner%",table.owner_username);
                 result = result.replace("%guest%",table.guest_username);
+                result = result.replace("%id%",table.id);
                 result = result.replace("%id%",table.id);
             }
             else {
@@ -255,7 +301,6 @@ function createHTMLTable(table) {
         else {
             result = HTMLIncompleteTable;
             result = result.replace("%owner%",table.owner_username);
-            result = result.replace("%id%",table.id);
             result = result.replace("%id%",table.id);
             result = result.replace("%id%",table.id);
         }
