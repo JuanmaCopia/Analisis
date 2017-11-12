@@ -6,6 +6,7 @@ package trivia;
 import org.eclipse.jetty.websocket.api.*;
 import org.eclipse.jetty.websocket.api.annotations.*;
 import org.json.JSONObject;
+import org.json.JSONArray;
 import org.javalite.activejdbc.Base;
 import java.util.*;
 
@@ -39,6 +40,7 @@ public class LobbyWebSocketHandler {
     public void onMessage(Session user,String message) {
         JSONObject task = new JSONObject(message);
         int userId,tableId,ownerId,guestId;
+        Table table;
         String description = new String(task.getString("description"));
         switch (description) {
             case "createTable":
@@ -50,7 +52,7 @@ public class LobbyWebSocketHandler {
                     newTable.initialize(userId);
                     Base.close();
                     App.sendCreatedTable(newTable);
-                    App.refreshTables();
+                    //App.refreshTables();
                 }
                 else {
                     Base.close();
@@ -61,13 +63,13 @@ public class LobbyWebSocketHandler {
                 // deberia chequear que el usuario es efectivamente el dueño de la mesa
                 tableId = task.getInt("table_id");
                 App.sendDeletedTable(tableId);
-                App.refreshTables();
+                //App.refreshTables();
                 break;
             case "joinTable":
                 guestId = task.getInt("guest_id");
                 tableId = task.getInt("table_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-                Table table = Table.findById(tableId);
+                table = Table.findById(tableId);
                 table.setGuestUser(guestId);
                 Base.close();
                 App.userJoinedTable(table);
@@ -77,19 +79,23 @@ public class LobbyWebSocketHandler {
                 tableId = task.getInt("table_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
                 Table table2 = Table.findById(tableId);
-                table2.deleteGuestUser();
+                guestId = table2.getGuestId();
                 Base.close();
-                App.guestLeftTable(table2);
+                table2.deleteGuestUser();
+                App.guestLeftTable(table2,guestId);
                 App.refreshTables();
                 break;
             case "startGame":
                 tableId = task.getInt("table_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-                Table table3 = Table.findById(tableId);
+                table = Table.findById(tableId);
+                guestId = table.getGuestId();
+                ownerId = table.getOwnerId();
                 Match m = new Match();
-                m.setMatchBeginning(table3.getOwnerId(),table3.getGuestId());
+                m.setMatchBeginning(table.getOwnerId(),table.getGuestId());
+                JSONArray questionsArray = Question.getMatchQuestions();
                 Base.close();
-                App.sendMatchQuestions(m.getMId());
+                App.sendMatchQuestions(questionsArray,guestId,ownerId,m.getMId());
                 App.refreshTables();
                 break;
             case "checkAnswer":

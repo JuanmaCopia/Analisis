@@ -145,7 +145,7 @@ public class App {
      * @return A String that represents a json object containing the table with the guest user gone.
      * @post. the table should be returned to all active users.
     */
-    public static void guestLeftTable(Table table) {
+    public static void guestLeftTable(Table table, int guest_id) {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         JSONObject jsonTable = table.toJson();
         Base.close();
@@ -154,6 +154,7 @@ public class App {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","userLeftTable")
                     .put("table", jsonTable)
+                    .put("guest_id",guest_id) // agregue esta linea
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -167,16 +168,15 @@ public class App {
      * @return A String that represents a json object containing .
      * @post. All database existing tables should be returned to all active users.
     */
-    public static void sendMatchQuestions(int match_id) {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        JSONArray questionsArray = Question.getMatchQuestions();
-        Base.close();
+    public static void sendMatchQuestions(JSONArray questionsArray, int guest_id, int owner_id,int match_id) {
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","gameQuestions")
                     .put("questionsList", questionsArray)
                     .put("match_id", match_id)
+                    .put("guest_id", guest_id)
+                    .put("owner_id", owner_id)
                 ));
             } catch (Exception e) {
                 e.printStackTrace();

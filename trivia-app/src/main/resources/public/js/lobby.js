@@ -1,25 +1,29 @@
 
-// Templates
+// Tables Templates
 var HTMLCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr></table>';
 var HTMLIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th><button id="entrar" onclick="sendJoinTable(%id%)">Entrar</button></th></tr></table>';
 var HTMLUserIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>Esperando</th></tr><tr><td></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td></tr></table>';
-var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start" onclick="sendStartGame(%id%)">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick" onclick="sendKickPlayer(%id%)">Expulsar Jugador</button></td></tr></table>';
-var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="sendExitTable(%id%)">Salir</button></td></tr></table>'
+var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start" onclick="sendStartGame(%id%)">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick" onclick="sendGuestLeft(%id%)">Expulsar Jugador</button></td></tr></table>';
+var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="sendGuestLeft(%id%)">Salir</button></td></tr></table>';
+// Question Template
+var HTMLquestion = '<div class="questionBox"><div class="question"><p>Categoria: <span id="category"></span></p><p id="questionText"></p></div><div class="options"><button id="option1" onclick="answerQuestion(1)"></button><button id="option2" onclick="answerQuestion(2)"></button><button id="option3" onclick="answerQuestion(3)"></button><button id="option4" onclick="answerQuestion(4)"></button></div></div>';
 // Variables
 var user;
 var sittedTable = null;
 var nextColumn = 1;
 var errorIsDisplayed = false;
+var matchQuestionsArray;
+var currentQuestion;
 
 // Task constructor
 function Task(description) {
     this.description = description;
-}
+};
 // Table constructor
 function Table(id,isOwner) {
     this.id = id;
     this.isOwner = isOwner;
-}
+};
 // Table function: returns the table id.
 Table.prototype.getId = function() {
     return this.id;
@@ -34,7 +38,7 @@ Table.prototype.isOwner = function() {
 function User(id,username) {
     this.id = id;
     this.username = username;
-}
+};
 
 // User function: returns the user id.
 User.prototype.getId = function() {
@@ -49,19 +53,19 @@ User.prototype.getUsername = function() {
 // recovers the user information and initialize the user variable with that data.
 function setUser() {
     user = new User(id("idh").innerHTML,id("nameh").innerHTML);
-}
+};
+
 // recovers the table information, if the user is in a table it initializes the sittedTable variable with that data.
 function setTable() {
-    if (id("in_tableh").innerHTML == "true") {
+    var elemT = id("in_tableh");
+    if (elemT.innerHTML == "true") {
+        elemT.innerHTML = "false";
         if (id("is_ownerh").innerHTML == "true")
             sittedTable = new Table(id("table_idh").innerHTML,true);
         else
             sittedTable = new Table(id("table_idh").innerHTML,false);
     }
-}
-
-// function to execute when the document is ready
-$(document).ready(setUser);
+};
 
 //Establish the WebSocket connection and set up event handlers
 var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port + "/lobbyy");
@@ -91,19 +95,16 @@ webSocket.onmessage = function (msg) {
         break;
         case "userJoined":
             if (data.table.guest_id == user.id) {
-                sittedTable = new Table(data.table_id,false);
+                sittedTable = new Table(data.table.id,false);
             }
         break;
         case "userLeftTable":
-            if (data.table.guest_id == user.id) {
-                sittedTable = new Table(data.table_id,false);
+            if (data.guest_id == user.id) {
+                sittedTable = null;
             }
         break;
-        case "userKickedFromTable":
-
-        break;
         case "gameQuestions":
-
+            //matchQuestionsArray = data.questionsList;
         break;
         default:
             displayError('Error desconocido');
@@ -133,7 +134,7 @@ function sendTable() {
     task.owner_id = user.getId();
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
-}
+};
 // This function is executed when the user wants to delete his table.
 // sends the delete table task, with this user id
 function sendDeleteTable() {
@@ -141,68 +142,58 @@ function sendDeleteTable() {
     task.table_id = sittedTable.getId();
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
-}
+};
 
 // This function is executed when the user wants to join to a table.
 // sends the join table task, with the table id
 function sendJoinTable(tableId) {
-    console.log("entras a la mesa "+tableId);
     if (sittedTable == null) {
         var task = new Task("joinTable");
         task.table_id = tableId;
+        task.guest_id = user.id;
         var jsonStringTask = JSON.stringify(task);
         webSocket.send(jsonStringTask);
     }
-}
+    else {
+        displayError("Debes salir de la mesa actual antes de unirte a otra");
+    }
+};
 
 // This function is executed when the user wants to leave a table.
 // sends the exit table task, with the table id
-function sendExitTable(tableId) {
-    console.log("salis de la mesa "+tableId);
-    var task = new Task("exitTable");
+function sendGuestLeft(tableId) {
+    var task = new Task("guestLeft");
     task.table_id = tableId;
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
-}
-
-// This function is executed when the owner kick a player from his table.
-// sends the kick player task, with the table id
-function sendKickPlayer(tableId) {
-    console.log("kickeando guest de la mesa "+tableId);
-    var task = new Task("kickPlayer");
-    task.table_id = tableId;
-    var jsonStringTask = JSON.stringify(task);
-    webSocket.send(jsonStringTask);
-}
+};
 
 // This function is executed when the owner start the game with another player.
 // sends the start game task, with the table id
 function sendStartGame(tableId) {
-    console.log("comenzando juego de la mesa "+tableId);
     var task = new Task("startGame");
     task.table_id = tableId;
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
-}
-
-
+};
 
 // display an error message
 function displayError(message) {
     errorIsDisplayed = true;
     id("error").innerHTML = message;
-}
+};
 
 // erase the error message
 function eraseError() {
     id("error").innerHTML = "";
-}
+};
 
 // Display all tables
 function displayAllTables(data) {
     id("column1").innerHTML = "";
     id("column2").innerHTML = "";
     id("column3").innerHTML = "";
+    nextColumn = 1;
     data.tableList.forEach(function (table) {
         insert("column"+nextColumn.toString(),createHTMLTable(table));
         switch(nextColumn) {
@@ -217,7 +208,7 @@ function displayAllTables(data) {
             break;
         }
     });
-}
+};
 
 // Display the created table
 function displayCreatedTable(data) {
@@ -233,7 +224,7 @@ function displayCreatedTable(data) {
             nextColumn = 1;
         break;
     }
-}
+};
 
 // Creates the new table
 function createTable(table) {
@@ -246,7 +237,7 @@ function createTable(table) {
             sittedTable = new Table(table.id,false);
         }
     }
-}
+};
 
 // Deletes this user table
 function deleteTable(table) {
@@ -257,12 +248,12 @@ function deleteTable(table) {
             sittedTable = null;
         }
     }
-}
+};
 
 // remove a table from the view
 function removeDeletedTable(data) {
     $("#table"+data.id).remove();
-}
+};
 
 // creates the html table.
 function createHTMLTable(table) {
@@ -306,107 +297,15 @@ function createHTMLTable(table) {
         }
     }
     return result;
-}
+};
 
 // inserts a message (html format string) at the begining of a html element
 function insert(targetId, message) {
     id(targetId).insertAdjacentHTML("afterbegin", message);
-}
+};
 
 // Helper function for selecting element by id
 function id(id) {
     return document.getElementById(id);
-}
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-    function Apple (type) {
-        this.type = type;
-        this.color = "red";
-    }
-
-    Apple.prototype.getInfo = function() {
-        return this.color + ' ' + this.type + ' apple';
-    };
-
-    var apple = new Apple('macintosh');
-    apple.color = "reddish";
-    alert(apple.getInfo());
-
-    Apple.prototype.getInfo = function() {
-        return this.color + ' ' + this.type + ' apple';
-    };
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-
-<table id="table">
-    <tr>
-        <th>Owner</th>
-        <th>VS</th>
-        <th>Player2</th>
-    </tr>
-    <tr>
-        <td><button id="start">Comenzar Partida</button></td>
-        <td><button id="deleteTable">Eliminar Mesa</button></td>
-        <td><button id="kick">Expulsar Jugador</button></td>
-    </tr>
-</table>
-
-<table id="table%id%">
-    <tr>
-        <th>%owner%</th>
-        <th>VS</th>
-        <th>%guest%</th>
-    </tr>
-    <tr>
-        <td></td>
-        <td><button id="exit">Salir</button></td>
-    </tr>
-</table>
-
-<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit">Salir</button></td></tr></table>
-
-
-<table id="table">
-    <tr>
-        <th>Owner</th>
-        <th>VS</th>
-        <th>Esperando</th>
-    </tr>
-    <tr>
-        <td><button id="deleteTable">Eliminar Mesa</button></td>
-    </tr>
-</table>
-
-<table id="table">
-    <tr>
-        <th>Owner</th>
-        <th>VS</th>
-        <th><button id="entrar">Entrar</button></th>
-    </tr>
-</table>
-
-<table id="table">
-    <tr>
-        <th>Juan</th>
-        <th>VS</th>
-        <th>Pepe</th>
-    </tr>
-</table>
-
-
-*/

@@ -70,10 +70,12 @@ public class Table extends Model {
     }
 
     public void deleteGuestUser() {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         this.set("guest_id",null);
         this.set("is_full",false);
         this.saveIt();
-    }    
+        Base.close();
+    }
 
     public void deleteTable() {
         this.deleteCascade();
