@@ -20,8 +20,7 @@ body {
     font-weight: bold;
     margin-bottom: 2vh;
     box-sizing: border-box;
-    height: 20%;
-
+    height: 17vh;
     display: flex;
     justify-content: center;
     align-content: center;
@@ -208,18 +207,18 @@ th, td {
 
 .options {
     width: 100%;
-    box-sizing: border-box;
     margin:auto;
     text-align: center;
 }
 
-.options button {
+#option1, #option2, #option3, #option4 {
+    display: block;
     background-color: #ff5500;
     border: none;
     color: white;
     padding: 0.5vmax;
     text-decoration: none;
-    margin: 0.6vmax;
+    margin: 2% auto;
     cursor: pointer;
     width: 26%;
     font-weight: bold;
@@ -235,7 +234,7 @@ th, td {
     box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
 
-span #category {
+#category {
     font-weight: bold;
     font-size: 4vw;
     text-align: center;
@@ -254,7 +253,6 @@ span #category {
     margin-top: 5%;
 }
 
-
 .question {
     margin:0 auto;
     width: 75%;
@@ -263,6 +261,22 @@ span #category {
     -moz-border-radius: 155px 155px 155px 155px;
     -webkit-border-radius: 155px 155px 155px 155px;
     border: 0.5vh solid #e6e6e6;
+}
+
+#rightFeedback {
+    font-weight: bold;
+    font-size: 4vw;
+    text-align: center;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #23d134;
+}
+
+#wrongFeedback {
+    font-weight: bold;
+    font-size: 4vw;
+    text-align: center;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    color: #e80000;
 }
 
 

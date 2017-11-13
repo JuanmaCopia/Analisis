@@ -6,14 +6,23 @@ var HTMLUserIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS<
 var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start" onclick="sendStartGame(%id%)">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick" onclick="sendGuestLeft(%id%)">Expulsar Jugador</button></td></tr></table>';
 var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="sendGuestLeft(%id%)">Salir</button></td></tr></table>';
 // Question Template
-var HTMLquestion = '<div class="questionBox"><div class="question"><p>Categoria: <span id="category"></span></p><p id="questionText"></p></div><div class="options"><button id="option1" onclick="answerQuestion(1)"></button><button id="option2" onclick="answerQuestion(2)"></button><button id="option3" onclick="answerQuestion(3)"></button><button id="option4" onclick="answerQuestion(4)"></button></div></div>';
+var HTMLquestion = '<div class="questionBox"><div class="question"><p>Categoria: <span id="category">%category%</span></p><p id="questionText">%question%</p></div><div class="options"><button id="option1" onclick="sendAnswer(1)">%op1%</button><button id="option2" onclick="sendAnswer(2)">%op2%</button><button id="option3" onclick="sendAnswer(3)">%op3%</button><button id="option4" onclick="sendAnswer(4)">%op4%</button></div></div>';
+var HTMLstatistics = ' ';
 // Variables
 var user;
 var sittedTable = null;
 var nextColumn = 1;
 var errorIsDisplayed = false;
-var matchQuestionsArray;
-var currentQuestion;
+
+var match;
+
+// Match constructor
+function Match(id,thisUsername,opponentUsername,lastQuestionId) {
+    this.id = id;
+    this.thisUsername = thisUsername;
+    this.opponentUsername = opponentUsername;
+    this.lastQuestionId = lastQuestionId;
+};
 
 // Task constructor
 function Task(description) {
@@ -103,12 +112,77 @@ webSocket.onmessage = function (msg) {
                 sittedTable = null;
             }
         break;
-        case "gameQuestions":
-            //matchQuestionsArray = data.questionsList;
+        case "startMatch":
+            if (data.guest_id == user.id) {
+                match = new Match(data.match_id,data.guestUsername,data.ownerUsername,data.lastQuestionId);
+                displayQuestion(data.firstQuestion);
+            }
+            else {
+                if (data.owner_id == user.id) {
+                    match = new Match(data.match_id,data.ownerUsername,data.guestUsername,data.lastQuestionId);
+                    displayQuestion(data.firstQuestion);
+                }
+            }
+        case "showResult":
+            /*
+            displayFeedback(data.isCorrect,data.option,data.correctOption);
+            if (data.matchFinished) {
+                setTimeout(displayStatistics(match.thisUsername,match.opponentUsername,userScore,oponentScore),3000);
+            }
+            else {
+                match.lastQuestionId = data.nextQuestion.id;
+                setTimeout(displayQuestion(data.nextQuestion),3000);
+            }
+            */
         break;
         default:
             displayError('Error desconocido');
     }
+};
+/*
+function displayFeedback(isCorrect,optionNumber,correctOption) {
+    if (isCorrect) {
+        $("#option"+optionNumber).css("background-color","#23d134");
+        $(".questionBox").append('<h1 id="rightFeedback">CORRECTO!!</h1>');
+    }
+    else {
+        $("#option"+optionNumber).css("background-color","#e80000");
+        $("#option"+correctOption).css("background-color","#23d134");
+        $(".questionBox").append('<h1 id="wrongFeedback">INCORRECTO</h1>');
+    }
+};
+
+
+function displayStatistics(userRightAnswers,oponentRightAnswers) {
+    result = HTMLstatistics;
+    if (userScore > oponentScore) {
+    }
+    else {
+    }
+};
+*/
+
+// Display a question
+function displayQuestion(data) {
+    result = HTMLquestion;
+    result = result.replace("%question%",data.pregunta);
+    result = result.replace("%category%",data.categoryName);
+    result = result.replace("%op1%",data.option1);
+    result = result.replace("%op2%",data.option2);
+    result = result.replace("%op3%",data.option3);
+    result = result.replace("%op4%",data.option4);
+    $("#container2").html("");
+    $("#container2").append(result);
+};
+
+function sendAnswer(optionNumber) {
+    var task = new Task("checkAnswer");
+    task.match_id = match.id;
+    task.user_id = user.id;
+    task.question_id = match.lastQuestionId;
+    task.answer = optionNumber;
+    var jsonStringTask = JSON.stringify(task);
+    webSocket.send(jsonStringTask);
 };
 
 // Actions to execute when a the websocket connection is closed.
@@ -190,9 +264,9 @@ function eraseError() {
 
 // Display all tables
 function displayAllTables(data) {
-    id("column1").innerHTML = "";
-    id("column2").innerHTML = "";
-    id("column3").innerHTML = "";
+    $("#column1").html("");
+    $("#column2").html("");
+    $("#column3").html("");
     nextColumn = 1;
     data.tableList.forEach(function (table) {
         insert("column"+nextColumn.toString(),createHTMLTable(table));
@@ -308,4 +382,6 @@ function insert(targetId, message) {
 function id(id) {
     return document.getElementById(id);
 };
+
+
 
