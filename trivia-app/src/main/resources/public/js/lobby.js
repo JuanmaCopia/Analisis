@@ -7,21 +7,22 @@ var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</t
 var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="sendGuestLeft(%id%)">Salir</button></td></tr></table>';
 // Question Template
 var HTMLquestion = '<div class="questionBox"><div class="question"><p>Categoria: <span id="category">%category%</span></p><p id="questionText">%question%</p></div><div class="options"><button id="option1" onclick="sendAnswer(1)">%op1%</button><button id="option2" onclick="sendAnswer(2)">%op2%</button><button id="option3" onclick="sendAnswer(3)">%op3%</button><button id="option4" onclick="sendAnswer(4)">%op4%</button></div></div>';
-var HTMLstatistics = ' ';
+var HTMLstatistics = '<div class="mainStat"><div class="stats"><div class="winnerStats"><h1 id="winnerName">%winner%</h1><p id="winnerScore">%winnerScore%</p><p id="winnerText">Winner!</p></div><div class="vs"><img id="vsimg" src="/images/vs.png"></div><div class="loserStats"><h1 id="loserName">%loser%</h1><p id="loserScore">%loserScore%</p><p id="loserText">Loser</p></div></div><form action="/lobby" method="get"><input id="returnLobby" type="submit" value="Volver a la sala"></form></div>';
 // Variables
 var user;
 var sittedTable = null;
 var nextColumn = 1;
 var errorIsDisplayed = false;
-
 var match;
 
 // Match constructor
-function Match(id,thisUsername,opponentUsername,lastQuestionId) {
+function Match(id,questionsArray,thisUserName,opponentName,lastQuestionId) {
     this.id = id;
-    this.thisUsername = thisUsername;
-    this.opponentUsername = opponentUsername;
+    this.questionsArray = questionsArray;
+    this.thisUserName = thisUserName;
+    this.opponentName = opponentName;
     this.lastQuestionId = lastQuestionId;
+    this.currentQuestion = 0;
 };
 
 // Task constructor
@@ -82,25 +83,30 @@ var webSocket = new WebSocket("ws://" + location.hostname + ":" + location.port 
 // Actions to execute when a message is received.
 webSocket.onmessage = function (msg) {
     var data = JSON.parse(msg.data);
-    switch(data.task) {
+    switch (data.task) {
         case "refreshTables":
-            if (user == null)
-                setUser();
-            if (sittedTable == null)
-                setTable();
-            displayAllTables(data);
-
+            if (match == null) {
+                if (user == null)
+                    setUser();
+                if (sittedTable == null)
+                    setTable();
+                displayAllTables(data);
+            }
         break;
         case "displayCreatedTable":
-            createTable(data.newTable);
-            displayCreatedTable(data.newTable);
+            if (match == null) {
+                createTable(data.newTable);
+                displayCreatedTable(data.newTable);
+            }
         break;
         case "creationError":
             displayError('Ya estas dentro de una mesa');
         break;
         case "tableDeleted":
             deleteTable(data.deletedTable);
-            removeDeletedTable(data.deletedTable);
+            if (match == null) {
+                removeDeletedTable(data.deletedTable);
+            }
         break;
         case "userJoined":
             if (data.table.guest_id == user.id) {
@@ -114,53 +120,71 @@ webSocket.onmessage = function (msg) {
         break;
         case "startMatch":
             if (data.guest_id == user.id) {
-                match = new Match(data.match_id,data.guestUsername,data.ownerUsername,data.lastQuestionId);
-                displayQuestion(data.firstQuestion);
+                var firstQuestion = data.questionsArray[0];
+                match = new Match(data.match_id,data.questionsArray,data.guestName,data.ownerName,firstQuestion.id);
+                displayQuestion(firstQuestion);
             }
             else {
                 if (data.owner_id == user.id) {
-                    match = new Match(data.match_id,data.ownerUsername,data.guestUsername,data.lastQuestionId);
-                    displayQuestion(data.firstQuestion);
+                    var firstQuestion = data.questionsArray[0];
+                    match = new Match(data.match_id,data.questionsArray,data.ownerName,data.guestName,firstQuestion.id);
+                    displayQuestion(firstQuestion);
+                    sendDeleteTable();
                 }
             }
+        break;
         case "showResult":
-            /*
-            displayFeedback(data.isCorrect,data.option,data.correctOption);
-            if (data.matchFinished) {
-                setTimeout(displayStatistics(match.thisUsername,match.opponentUsername,userScore,oponentScore),3000);
+            match.currentQuestion++;
+            if (!data.matchOver) {
+                displayFeedback(data.isCorrect,data.userAnswer,data.correctAnswer);
+                if (match.currentQuestion == 3) {
+                    match.currentQuestion = 0;
+                }
+                var nextQuestion = match.questionsArray[match.currentQuestion];
+                match.lastQuestionId = nextQuestion.id;
+                setTimeout(function() {
+                    displayQuestion(nextQuestion);
+                },1600);
             }
             else {
-                match.lastQuestionId = data.nextQuestion.id;
-                setTimeout(displayQuestion(data.nextQuestion),3000);
+                displayStatistics(data.userScore,data.opponentScore,match.thisUserName,match.opponentName);
             }
-            */
         break;
         default:
             displayError('Error desconocido');
+        break;
     }
 };
-/*
-function displayFeedback(isCorrect,optionNumber,correctOption) {
+
+function displayFeedback(isCorrect,userAnswer,correctAnswer) {
     if (isCorrect) {
-        $("#option"+optionNumber).css("background-color","#23d134");
+        $("#option"+userAnswer).css("background-color","#23d134");
         $(".questionBox").append('<h1 id="rightFeedback">CORRECTO!!</h1>');
     }
     else {
-        $("#option"+optionNumber).css("background-color","#e80000");
-        $("#option"+correctOption).css("background-color","#23d134");
+        $("#option"+userAnswer).css("background-color","#e80000");
+        $("#option"+correctAnswer).css("background-color","#23d134");
         $(".questionBox").append('<h1 id="wrongFeedback">INCORRECTO</h1>');
     }
 };
 
-
-function displayStatistics(userRightAnswers,oponentRightAnswers) {
+function displayStatistics(userScore,opponentScore,userName,opponentName) {
     result = HTMLstatistics;
-    if (userScore > oponentScore) {
+    if (userScore > opponentScore) {
+        result = result.replace("%winner%",userName);
+        result = result.replace("%loser%",opponentName);
+        result = result.replace("%winnerScore%",userScore);
+        result = result.replace("%loserScore%",opponentScore);
     }
     else {
+        result = result.replace("%winner%",opponentName);
+        result = result.replace("%loser%",userName);
+        result = result.replace("%winnerScore%",opponentScore);
+        result = result.replace("%loserScore%",userScore);
     }
+    $("#container2").html("");
+    $("#container2").append(result);
 };
-*/
 
 // Display a question
 function displayQuestion(data) {
@@ -180,7 +204,7 @@ function sendAnswer(optionNumber) {
     task.match_id = match.id;
     task.user_id = user.id;
     task.question_id = match.lastQuestionId;
-    task.answer = optionNumber;
+    task.userAnswer = optionNumber;
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
 };
@@ -245,7 +269,7 @@ function sendGuestLeft(tableId) {
 // This function is executed when the owner start the game with another player.
 // sends the start game task, with the table id
 function sendStartGame(tableId) {
-    var task = new Task("startGame");
+    var task = new Task("startMatch");
     task.table_id = tableId;
     var jsonStringTask = JSON.stringify(task);
     webSocket.send(jsonStringTask);
