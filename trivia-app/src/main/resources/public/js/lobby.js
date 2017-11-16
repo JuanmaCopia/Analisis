@@ -1,10 +1,10 @@
 
 // Tables Templates
-var HTMLCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr></table>';
-var HTMLIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th><button id="entrar" onclick="sendJoinTable(%id%)">Entrar</button></th></tr></table>';
-var HTMLUserIncompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>Esperando</th></tr><tr><td></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td></tr></table>';
-var HTMLUserCompleteTable = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td><button id="start" onclick="sendStartGame(%id%)">Comenzar Partida</button></td><td><button id="deleteTable" onclick="sendDeleteTable()">Eliminar Mesa</button></td><td><button id="kick" onclick="sendGuestLeft(%id%)">Expulsar Jugador</button></td></tr></table>';
-var HTMLCompleteTableAsGuest = '<table id="table%id%"><tr><th>%owner%</th><th>VS</th><th>%guest%</th></tr><tr><td></td><td><button id="exit" onclick="sendGuestLeft(%id%)">Salir</button></td></tr></table>';
+var HTMLCompleteTable = '<div id="table%id%" class="table"><div class="status"><p id="statusText">Mesa Completa</p></div><div class="players"><div class="owner"><p id="ownerName">%owner%</p></div><div class="vsBox"><img id="vsimg" src="/images/vs.png"></div><div class="guest"><div class="guestBox"><p id="guestName">%guest%</p></div></div></div><div class="buttons"></div></div>';
+var HTMLIncompleteTable = '<div id="table%id%" class="table"><div class="status"><p id="statusText">Esperando Jugador</p></div><div class="players"><div class="owner"><p id="ownerName">%owner%</p></div><div class="vsBox"><img id="vsimg" src="/images/vs.png"></div><div class="guest"><div class="guestBox"><button id="join" onclick="sendJoinTable(%id%)">Entrar</button></div></div></div><div class="buttons"></div></div>';
+var HTMLUserIncompleteTable = '<div id="table%id%" class="table"><div class="status"><p id="statusText">Esperando Jugador</p></div><div class="players"><div class="owner"><p id="ownerName">%owner%</p></div><div class="vsBox"><img id="vsimg" src="/images/vs.png"></div><div class="guest"><div class="guestBox"><p id="guestName"></p></div></div></div><div class="buttons"><div class="singleButtonBox"><button id="delIncomplete" onclick="sendDeleteTable()">Eliminar</button></div></div></div>';
+var HTMLUserCompleteTable = '<div id="table%id%" class="table"><div class="status"><p id="statusText">Mesa Completa</p></div><div class="players"><div class="owner"><p id="ownerName">%owner%</p></div><div class="vsBox"><img id="vsimg" src="/images/vs.png"></div><div class="guest"><div class="guestBox"><p id="guestName">%guest%</p><button id="kick" onclick="sendGuestLeft(%id%)">X</button></div></div></div><div class="buttons"><div class="leftButtonBox"><button id="deleteTable" onclick="sendDeleteTable()">Eliminar</button></div><div class="rightButtonBox"><button id="startGame" onclick="sendStartGame(%id%)">Comenzar</button></div></div></div>';
+var HTMLCompleteTableAsGuest = '<div id="table%id%" class="table"><div class="status"><p id="statusText">Mesa Completa</p></div><div class="players"><div class="owner"><p id="ownerName">%owner%</p></div><div class="vsBox"><img id="vsimg" src="vs.png"></div><div class="guest"><div class="guestBox"><p id="guestName">%guest%</p></div></div></div><div class="buttons"><div class="singleButtonBox"><button id="exit" onclick="sendGuestLeft(%id%)">Salir</button></div></div></div>'
 // Question Template
 var HTMLquestion = '<div class="questionBox"><div class="question"><p>Categoria: <span id="category">%category%</span></p><p id="questionText">%question%</p></div><div class="options"><button id="option1" onclick="sendAnswer(1)">%op1%</button><button id="option2" onclick="sendAnswer(2)">%op2%</button><button id="option3" onclick="sendAnswer(3)">%op3%</button><button id="option4" onclick="sendAnswer(4)">%op4%</button></div></div>';
 var HTMLstatistics = '<div class="mainStat"><div class="stats"><div class="winnerStats"><h1 id="winnerName">%winner%</h1><p id="winnerScore">%winnerScore%</p><p id="winnerText">Winner!</p></div><div class="vs"><img id="vsimg" src="/images/vs.png"></div><div class="loserStats"><h1 id="loserName">%loser%</h1><p id="loserScore">%loserScore%</p><p id="loserText">Loser</p></div></div><form action="/lobby" method="get"><input id="returnLobby" type="submit" value="Volver a la sala"></form></div>';
@@ -288,40 +288,15 @@ function eraseError() {
 
 // Display all tables
 function displayAllTables(data) {
-    $("#column1").html("");
-    $("#column2").html("");
-    $("#column3").html("");
-    nextColumn = 1;
+    $(".tablesContainer").html("");
     data.tableList.forEach(function (table) {
-        insert("column"+nextColumn.toString(),createHTMLTable(table));
-        switch(nextColumn) {
-            case 1:
-                nextColumn = 2;
-            break;
-            case 2:
-                nextColumn = 3;
-            break;
-            case 3:
-                nextColumn = 1;
-            break;
-        }
+        $(".tablesContainer").append(createHTMLTable(table));
     });
 };
 
 // Display the created table
-function displayCreatedTable(data) {
-    insert("column"+nextColumn.toString(),createHTMLTable(data));
-    switch(nextColumn) {
-        case 1:
-            nextColumn = 2;
-        break;
-        case 2:
-            nextColumn = 3;
-        break;
-        case 3:
-            nextColumn = 1;
-        break;
-    }
+function displayCreatedTable(table) {
+    $(".tablesContainer").append(createHTMLTable(table));
 };
 
 // Creates the new table
