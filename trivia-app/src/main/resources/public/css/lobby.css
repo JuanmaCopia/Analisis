@@ -25,6 +25,70 @@ body {
     justify-content: center;
     align-content: center;
     flex-direction: column;
+    margin: 0;
+}
+
+.topBar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+}
+
+.returnBoxLeft {
+    text-align: center;
+    box-sizing: border-box;
+    width: 50%;
+    background-color: #6d6d6d;
+
+}
+
+.errorBox {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    flex-direction: column;
+    background-color: #6d6d6d;
+    height: 3vh;
+    min-height: 3vh;
+    width: 100%;
+}
+
+.errorBox p {
+    font-size: 1.7vmax;
+    color: white;
+    font-family: Arial;
+}
+
+.createTableBoxLeft {
+    text-align: center;
+    box-sizing: border-box;
+    background-color: #6d6d6d;
+    width: 50%;
+}
+
+#createTable, input[type="submit"]{
+    box-sizing: border-box;
+    background-color: #ff9a16;
+    border: none;
+    color: white;
+    padding: 0.5vmax;
+    text-decoration: none;
+    margin: 1.5% auto;
+    cursor: pointer;
+    width: 50%;
+    font-weight: bold;
+    font-size: 1.5vmax;
+
+    border-radius: 33px 33px 33px 33px;
+    -moz-border-radius: 33px 33px 33px 33px;
+    -webkit-border-radius: 33px 33px 33px 33px;
+    border: 0px solid #000000;
+
+    -webkit-box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
+    -moz-box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
+    box-shadow: 10px 4px 5px 0px rgba(0,0,0,0.35);
 }
 
 .subContainer {
@@ -36,7 +100,7 @@ body {
 
 .tablesContainer {
     width: 100%;
-    height: 100%;
+    min-height: 74vh;
     padding-top: 2%;
     background-color: #e2e2e2;
     box-sizing: border-box;
@@ -245,60 +309,15 @@ body {
 }
 
 .chat {
-
     float: right;
     width: 28%;
     height: 100%;
-    min-height: 79vh;
+    min-height: 83vh;
     box-sizing: border-box;
     background-color: #f7f7f7;
 }
 /* cambios lobby fin*/
-
-#createTable {
-    -moz-box-shadow: 3px 4px 0px 0px #8a2a21;
-    -webkit-box-shadow: 3px 4px 0px 0px #8a2a21;
-    box-shadow: 3px 4px 0px 0px #8a2a21;
-    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #c62d1f), color-stop(1, #f24437));
-    background:-moz-linear-gradient(top, #c62d1f 5%, #f24437 100%);
-    background:-webkit-linear-gradient(top, #c62d1f 5%, #f24437 100%);
-    background:-o-linear-gradient(top, #c62d1f 5%, #f24437 100%);
-    background:-ms-linear-gradient(top, #c62d1f 5%, #f24437 100%);
-    background:linear-gradient(to bottom, #c62d1f 5%, #f24437 100%);
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#c62d1f', endColorstr='#f24437',GradientType=0);
-    background-color:#c62d1f;
-    -moz-border-radius:18px;
-    -webkit-border-radius:18px;
-    border-radius:18px;
-    border:1px solid #d02718;
-    display:inline-block;
-    cursor:pointer;
-    color:#ffffff;
-    font-family:Arial;
-    font-size:2vmax;
-    font-weight:bold;
-    padding:2%;
-    text-decoration:none;
-    text-shadow:0px 1px 0px #810e05;
-}
-#createTable:hover {
-    background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f24437), color-stop(1, #c62d1f));
-    background:-moz-linear-gradient(top, #f24437 5%, #c62d1f 100%);
-    background:-webkit-linear-gradient(top, #f24437 5%, #c62d1f 100%);
-    background:-o-linear-gradient(top, #f24437 5%, #c62d1f 100%);
-    background:-ms-linear-gradient(top, #f24437 5%, #c62d1f 100%);
-    background:linear-gradient(to bottom, #f24437 5%, #c62d1f 100%);
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f24437', endColorstr='#c62d1f',GradientType=0);
-    background-color:#f24437;
-}
-#createTable:active {
-    position:relative;
-    top:1px;
-}
-
-
 /* question css */
-
 .options {
     width: 100%;
     margin:auto;

@@ -23,9 +23,18 @@
 
         <div id="container2">
             <div class="subContainer">
-                <div class="topBar" id="errorCreation">
+                <div class="errorBox">
                     <p id="error"></p>
-                    <button id="createTable">Crear Mesa</button>
+                </div>
+                <div class="topBar">
+                    <div class="createTableBoxLeft">
+                        <button id="createTable">Crear Mesa</button>
+                    </div>
+                    <div class="returnBoxLeft">
+                        <form method="get" action="/game2">
+                            <input type="submit" value="Volver al Menu"/>
+                        </form>
+                    </div>
                 </div>
                 <div class="tablesContainer"></div>
             </div>
