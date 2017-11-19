@@ -27,6 +27,10 @@ public class MatchTest {
     public void validatePresenceOfUser1Id() {
         Match m = new Match();
         m.set("user1Id", null);
+        m.set("user2Id", 2);
+        m.set("user1Score", 0);
+        m.set("user2Score", 0);
+        m.set("state", "Game_In_Progress");
         m.save();
         assertEquals(m.isValid(), false);
     }
@@ -35,65 +39,97 @@ public class MatchTest {
     @Test
     public void validatePresenceOfUser2Id() {
         Match m = new Match();
+        m.set("user1Id", 1);
         m.set("user2Id", null);
+        m.set("user1Score", 0);
+        m.set("user2Score", 0);
+        m.set("state", "Game_In_Progress");
         m.save();
         assertEquals(m.isValid(), false);
     }
-/*
-    //Validates the Table is full (the guest joined in).
+
+    //Validates presence of the user1's score.
     @Test
-    public void validateTableIsFull() {
-        Table table = new Table();
-        table.set("owner_id", null);
-        table.set("guest_id", null);
-        table.set("is_full", true);
-        table.save();
-        assertEquals(table.isValid(), false);
-        table.set("owner_id", 1);
-        table.set("guest_id", 2);
-        table.set("is_full", true);
-        table.save();
-        assertEquals(table.isValid(), true);
+    public void validatePresenceOfUser1Score() {
+        Match m = new Match();
+        m.set("user1Id", 1);
+        m.set("user2Id", 2);
+        m.set("user1Score", null);
+        m.set("user2Score", 0);
+        m.set("state", "Game_In_Progress");
+        m.save();
+        assertEquals(m.isValid(), false);
     }
 
-    //A owner user should leave his current table before creating another one.
+    //Validates presence of the user2's score.
     @Test
-    public void validateUniquenessOfOwnerId() {
-        Table t = new Table();
-        t.set("owner_id",1);
-        t.saveIt();
-        Table t2 = new Table();
-        t2.set("owner_id",1);
-        t2.save();
-        assertEquals(t2.isValid(),false);
-        assertEquals(t2.errors().get("owner_id"), "You are inside a Table as a owner already.");
-    }
-    
-    //A guest user should leave his current table before creating another one as a owner.
-    @Test
-    public void validateUniquenessOfUserId() {
-        Table t = new Table();
-        t.set("owner_id",1);
-        t.set("guest_id", 2);
-        t.set("is_full", true);
-        t.saveIt();
-        Table t2 = new Table();
-        t2.set("owner_id",2);
-        t2.save();
-        assertEquals((t.getInteger("guest_id")!=t2.getInteger("owner_id")),false);
+    public void validatePresenceOfUser2Score() {
+        Match m = new Match();
+        m.set("user1Id", 1);
+        m.set("user2Id", 2);
+        m.set("user1Score", 0);
+        m.set("user2Score", null);
+        m.set("state", "Game_In_Progress");
+        m.save();
+        assertEquals(m.isValid(), false);
     }
 
-    //A owner user should leave his current table before joining another one as a guest.
+    //Validates presence of the match state.
     @Test
-    public void validateUniquenessOfUserId2() {
-        Table t = new Table();
-        t.set("owner_id",1);
-        t.saveIt();
-        Table t2 = new Table();
-        t2.set("owner_id",2);
-        t2.set("guest_id", 1);
-        t2.set("is_full", true);
-        t2.save();
-        assertEquals((t.getInteger("owner_id")!=t2.getInteger("guest_id")),false);
-    }*/
+    public void validatePresenceOfState() {
+        Match m = new Match();
+        m.set("user1Id", 1);
+        m.set("user2Id", 2);
+        m.set("user1Score", 0);
+        m.set("user2Score", 0);
+        m.set("state", "");
+        m.save();
+        assertEquals(m.isValid(), false);
+    }
+
+    //Validates the range of user1Score.
+    @Test
+    public void validateRangeOfUser1Score() {
+        Match m = new Match();
+        m.set("user1Id", 1);
+        m.set("user2Id", 2);
+        m.set("user1Score", -1);
+        m.set("user2Score", 0);
+        m.set("state", "Game_In_Progress");
+        m.save();
+        assertEquals(m.isValid(), false);
+        m.set("user1Score", 16);
+        m.save();
+        assertEquals(m.isValid(), false);
+    }
+
+    //Validates the range of user2Score.
+    @Test
+    public void validateRangeOfUser2Score() {
+        Match m = new Match();
+        m.set("user1Id", 1);
+        m.set("user2Id", 2);
+        m.set("user1Score", 0);
+        m.set("user2Score", -1);
+        m.set("state", "Game_In_Progress");
+        m.save();
+        assertEquals(m.isValid(), false);
+        m.set("user2Score", 16);
+        m.save();
+        assertEquals(m.isValid(), false);
+    }
+
+    //Validates the state of the match according to the presence of winnerId.
+    @Test
+    public void validateGameOverState() {
+        Match m = new Match();
+        m.set("winnerId", 1);
+        m.set("state", "Game_In_Progress");
+        m.save();
+        assertEquals(m.isValid(), false);
+        m.set("winnerId", null);
+        m.set("state", "Game_Over");
+        m.save();
+        assertEquals(m.isValid(), false);
+    }
 }
