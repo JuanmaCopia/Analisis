@@ -20,8 +20,7 @@ public class LobbyWebSocketHandler {
     */
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
-        String username = "User" + App.nextUserNumber++;
-        App.userUsernameMap.put(user, username);
+        App.userMap.put(user, new UserInfo());
         App.refreshTables();
     }
 
@@ -30,8 +29,25 @@ public class LobbyWebSocketHandler {
     */
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
-        String username = App.userUsernameMap.get(user);
-        App.userUsernameMap.remove(user);
+        UserInfo userInfo = App.userMap.get(user);
+        int userId = userInfo.getId();
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+        if (!tablesList.isEmpty()) {
+            Table table = tablesList.get(0);
+            if (table.getOwnerId() == userId) {
+                Base.close();
+                App.sendDeletedTable(table.getTableId());
+            }
+            else {
+                Base.close();
+                table.deleteGuestUser();
+            }
+        }
+        else {
+            Base.close();
+        }
+        App.userMap.remove(user);
     }
     /**
      * Actions to perform when a message from the client arrives.
@@ -105,10 +121,15 @@ public class LobbyWebSocketHandler {
                 Question q = Question.findById(questionId);
                 int correctAnswer = q.getCorrectOption();
                 if (!match.isOver() && (userAnswer == correctAnswer)) {
-                    match.incrementScore(userId);  
+                    match.incrementScore(userId);
                 }
                 Base.close();
                 App.answerQuest(user,userAnswer,correctAnswer,matchId,userId);
+                break;
+            case "setUser":
+                App.userMap.put(user, new UserInfo(task.getInt("user_id"),task.getString("username")));
+                break;
+            case "ping":
                 break;
         }
     }
