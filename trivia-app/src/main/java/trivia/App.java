@@ -193,7 +193,7 @@ public class App {
     }
 
     /**
-     * This method inform .
+     * This method sends the question feedback.
      * @param The session from the user that tried to create a new table, the answer from the user, the correct answer, the match Id and the user Id.
      * @pre. true.
      * @return A String that represents a json object containing task identifier, a boolean that represents

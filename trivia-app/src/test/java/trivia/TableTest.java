@@ -47,8 +47,7 @@ public class TableTest {
         assertEquals(table.isValid(), true);
     }
 
-    //Debes salir de la mesa actual antes de unirte a otra
-    //Ya estas dentro de una mesa como guest o como owner
+    //A owner user should leave his current table before creating another one.
     @Test
     public void validateUniquenessOfOwnerId() {
         Table t = new Table();
@@ -61,6 +60,7 @@ public class TableTest {
         assertEquals(t2.errors().get("owner_id"), "You are inside a Table as a owner already.");
     }
     
+    //A guest user should leave his current table before creating another one as a owner.
     @Test
     public void validateUniquenessOfUserId() {
         Table t = new Table();
@@ -72,5 +72,19 @@ public class TableTest {
         t2.set("owner_id",2);
         t2.save();
         assertEquals((t.getInteger("guest_id")!=t2.getInteger("owner_id")),false);
+    }
+
+    //A owner user should leave his current table before joining another one as a guest.
+    @Test
+    public void validateUniquenessOfUserId2() {
+        Table t = new Table();
+        t.set("owner_id",1);
+        t.saveIt();
+        Table t2 = new Table();
+        t2.set("owner_id",2);
+        t2.set("guest_id", 1);
+        t2.set("is_full", true);
+        t2.save();
+        assertEquals((t.getInteger("owner_id")!=t2.getInteger("guest_id")),false);
     }
 }
