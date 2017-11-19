@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Sala de Espera - Pregunta2</title>
+    <link rel='stylesheet' href='/css/lobby.css'>
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <script src="/js/jquery-3.2.1.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <p hidden id="idh">{{user_id}}</p>
+        <p hidden id="nameh">{{username}}</p>
+        <p hidden id="table_idh">{{table_id}}</p>
+        <p hidden id="is_ownerh">{{is_owner}}</p>
+        <p hidden id="in_tableh">{{in_table}}</p>
+
+        <div class="header">
+            <h1>Pregunta2</h1>
+        </div>
+
+        <div id="container2">
+            <div class="subContainer">
+                <div class="errorBox">
+                    <p id="error"></p>
+                </div>
+                <div class="topBar">
+                    <div class="createTableBoxLeft">
+                        <button id="createTable">Crear Mesa</button>
+                    </div>
+                    <div class="returnBoxLeft">
+                        <form method="get" action="/game2">
+                            <input type="submit" value="Volver al Menu"/>
+                        </form>
+                    </div>
+                </div>
+                <div class="tablesContainer"></div>
+            </div>
+            <div class="chat"></div>
+        </div>
+
+    </div>
+
+    <script src="/js/lobby.js"></script>
+    <script src="/js/webSocketHandler.js"></script>
+    <script src="/js/helper.js"></script>
+
+</body>
+
+</html>

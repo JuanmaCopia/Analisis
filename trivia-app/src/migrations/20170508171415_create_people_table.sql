@@ -9,3 +9,10 @@ CREATE TABLE users (
   created_at DATETIME,
   updated_at DATETIME
 )ENGINE=InnoDB;
+
+insert into users (username,password,email,rightAnswers,wrongAnswers,admin) values
+("seba","seba","seba@gmail.com",12,0,true),
+("juanma","juanma","juanma@gmail.com",25,0,true),
+("pepe","seba","pepe@gmail.com",66,0,false),
+("jose","seba","jose@gmail.com",54,0,false),
+("cacho","cacho","cacho@gmail.com",125,0,false);
