@@ -154,7 +154,7 @@ public class App {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","userLeftTable")
                     .put("table", jsonTable)
-                    .put("guest_id",guest_id) // agregue esta linea
+                    .put("guest_id",guest_id) 
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -194,9 +194,11 @@ public class App {
 
     /**
      * This method inform .
-     * @param The session from the user that tried to create a new table.
+     * @param The session from the user that tried to create a new table, the answer from the user, the correct answer, the match Id and the user Id.
      * @pre. true.
-     * @return A String that represents a json object containing task identifier.
+     * @return A String that represents a json object containing task identifier, a boolean that represents
+     * if the user answer was correct, the user answer, the correct answer, a boolean that tells if the match is over
+     * and the score of the user and the opponent.
      * @post. the message should be returned only to the user of the session.
     */
     public static void answerQuest(Session userSession, int userAnswer, int correctAnswer, int matchId, int userId) {

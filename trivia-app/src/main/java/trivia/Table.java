@@ -3,10 +3,17 @@ package trivia;
 import java.util.*;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.Base;
+import org.javalite.activejdbc.validation.UniquenessValidator;
 
 import org.json.JSONObject;
 
 public class Table extends Model {
+
+    //Bloque estatico para poder utilizar los metodos de validacion correspondientes en las clases de Testing.
+    static {
+        validatePresenceOf("owner_id").message("Please, provide the owner_id");
+        validateWith(new UniquenessValidator("owner_id")).message("You are inside a Table as a owner already.");
+    }
 
     public JSONObject toJson() {
         int guestId;

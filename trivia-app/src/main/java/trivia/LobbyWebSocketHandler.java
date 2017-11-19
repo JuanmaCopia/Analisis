@@ -92,8 +92,8 @@ public class LobbyWebSocketHandler {
                 guestId = table.getGuestId();
                 ownerId = table.getOwnerId();
                 Match m = new Match();
-                matchId = m.getMId();
                 m.setMatchBeginning(ownerId,guestId);
+                matchId = m.getMId();
                 JSONArray questionsArray = Question.getMatchQuestions();
                 Base.close();
                 App.sendMatchQuestions(questionsArray,ownerId,guestId,matchId);
@@ -107,7 +107,7 @@ public class LobbyWebSocketHandler {
                 Match match = Match.findById(matchId);
                 Question q = Question.findById(questionId);
                 int correctAnswer = q.getCorrectOption();
-                if ((!match.isOver()) && (userAnswer == correctAnswer)) {
+                if (!match.isOver() && (userAnswer == correctAnswer)) {
                     match.incrementScore(userId);  
                 }
                 Base.close();

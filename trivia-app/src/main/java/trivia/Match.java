@@ -145,8 +145,7 @@ public class Match extends Model {
      * @post. a boolean value must be returned.
      */
     public boolean isOver() {
-        String state = this.getString("state");
-        return (state == "Game_Over");
+        return (this.getInteger("winnerId")!=null);
     }
 
     /**
@@ -158,18 +157,21 @@ public class Match extends Model {
     public void incrementScore(int userId) {
         if (userId == this.getInteger("user1Id")) {
             this.set("user1Score",this.getInteger("user1Score") + 1);
-            if (this.getInteger("user1Score") == 3) {
+            this.saveIt();
+            if (this.getInteger("user1Score") >= 3) {
                 this.set("winnerId",this.getInteger("user1Id"));
                 this.set("state","Game_Over");
+                this.saveIt();
             }
         }
         else {
             this.set("user2Score",this.getInteger("user2Score") + 1);
-            if (this.getInteger("user2Score") == 3) {
+            this.saveIt();
+            if (this.getInteger("user2Score") >= 3) {
                 this.set("winnerId",this.getInteger("user2Id"));
                 this.set("state","Game_Over");
+                this.saveIt();
             }
         }
-        this.saveIt();
     }
 }
