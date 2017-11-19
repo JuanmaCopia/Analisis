@@ -5,6 +5,17 @@ import org.javalite.activejdbc.Model;
 
 public class Match extends Model {
 
+    //Bloque estatico para poder utilizar los metodos de validacion correspondientes en las clases de Testing.
+    static {
+        validatePresenceOf("user1Id").message("Please, provide the user1Id");
+        validatePresenceOf("user2Id").message("Please, provide the user2Id");
+        validatePresenceOf("user1Score").message("Please, provide the user1Score");
+        validatePresenceOf("user2Score").message("Please, provide the user2Score");
+        validatePresenceOf("state").message("Please, provide the state");
+        validateRange("user1Score", 0, 15).message("user1Score.outside.limits");
+        validateRange("user2Score", 0, 15).message("user2Score.outside.limits");
+    }
+
     /**
      * returns the id of the current object.
      * @pre. this != null

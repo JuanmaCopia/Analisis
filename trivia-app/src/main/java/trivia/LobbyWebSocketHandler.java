@@ -52,7 +52,6 @@ public class LobbyWebSocketHandler {
                     newTable.initialize(userId);
                     Base.close();
                     App.sendCreatedTable(newTable);
-                    //App.refreshTables();
                 }
                 else {
                     Base.close();
@@ -60,10 +59,8 @@ public class LobbyWebSocketHandler {
                 }
                 break;
             case "deleteTable":
-                // deberia chequear que el usuario es efectivamente el dueño de la mesa
                 tableId = task.getInt("table_id");
                 App.sendDeletedTable(tableId);
-                //App.refreshTables();
                 break;
             case "joinTable":
                 guestId = task.getInt("guest_id");
