@@ -84,3 +84,13 @@ webSocket.onmessage = function (msg) {
 * WebSocket onclose hadler: when the websocket conection is lost, shows an alert message to the user.
 */
 webSocket.onclose = function () { alert("WebSocket connection closed") };
+
+
+/*
+* WebSocket onopen hadler: recovers user information and sends it to the server.
+*/
+webSocket.onopen = function () {
+    setUser();
+    setTable();
+    sendUserInfo();
+};

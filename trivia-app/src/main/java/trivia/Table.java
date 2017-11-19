@@ -38,6 +38,10 @@ public class Table extends Model {
         return result;
     }
 
+    public int getTableId() {
+        return this.getInteger("id");
+    }
+
 
     public void initialize(int ownerId) {
         this.set("owner_id",ownerId);

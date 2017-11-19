@@ -194,6 +194,32 @@ function deleteTable(table) {
     }
 };
 
+/*
+* Sends the "setUser" task, that is a request to the server to set this user data.
+*/
+function sendUserInfo() {
+    var task = new Task("setUser");
+    task.user_id = user.id;
+    task.username = user.username;
+    var jsonStringTask = JSON.stringify(task);
+    webSocket.send(jsonStringTask);
+};
+
+/*
+* makes a ping to the server.
+*/
+function sendPing() {
+    var task = new Task("ping");
+    var jsonStringTask = JSON.stringify(task);
+    webSocket.send(jsonStringTask);
+};
+
+/*
+* makes a ping to the server every 50 seconds.
+*/
+setInterval(function() {
+    sendPing();
+},50000);
 
 
 

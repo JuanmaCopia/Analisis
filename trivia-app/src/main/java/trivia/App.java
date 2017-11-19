@@ -21,7 +21,7 @@ import static j2html.TagCreator.*;
 public class App {
 
     // this map is shared between sessions and threads, so it needs to be thread-safe
-    static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
+    static Map<Session, UserInfo> userMap = new ConcurrentHashMap<>();
     static int nextUserNumber = 1; //Assign to username for next connecting user
 
     /**
@@ -38,7 +38,7 @@ public class App {
             tableArray.put(t.toJson());
         }
         Base.close();
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","refreshTables")
@@ -61,7 +61,7 @@ public class App {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         JSONObject jsonTable = table.toJson();
         Base.close();
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","displayCreatedTable")
@@ -86,7 +86,7 @@ public class App {
         JSONObject deletedTable = table.toJson();
         table.deleteCascadeShallow();
         Base.close();
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","tableDeleted")
@@ -126,7 +126,7 @@ public class App {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         JSONObject jsonTable = table.toJson();
         Base.close();
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","userJoined")
@@ -149,12 +149,12 @@ public class App {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         JSONObject jsonTable = table.toJson();
         Base.close();
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","userLeftTable")
                     .put("table", jsonTable)
-                    .put("guest_id",guest_id) 
+                    .put("guest_id",guest_id)
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -175,7 +175,7 @@ public class App {
         String ownerName = owner.getUsername();
         String guestName = guest.getUsername();
         Base.close();
-        userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
+        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
                     .put("task","startMatch")
