@@ -39,7 +39,7 @@ public class LobbyWebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session user,String message) {
         JSONObject task = new JSONObject(message);
-        int userId,tableId,ownerId,guestId;
+        int userId,tableId,ownerId,guestId,matchId,questionId,userAnswer;
         Table table;
         String description = new String(task.getString("description"));
         switch (description) {
@@ -85,24 +85,34 @@ public class LobbyWebSocketHandler {
                 App.guestLeftTable(table2,guestId);
                 App.refreshTables();
                 break;
-            case "startGame":
+            case "startMatch":
                 tableId = task.getInt("table_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
                 table = Table.findById(tableId);
                 guestId = table.getGuestId();
                 ownerId = table.getOwnerId();
                 Match m = new Match();
-                m.setMatchBeginning(table.getOwnerId(),table.getGuestId());
+                matchId = m.getMId();
+                m.setMatchBeginning(ownerId,guestId);
                 JSONArray questionsArray = Question.getMatchQuestions();
                 Base.close();
-                App.sendMatchQuestions(questionsArray,guestId,ownerId,m.getMId());
-                App.refreshTables();
+                App.sendMatchQuestions(questionsArray,ownerId,guestId,matchId);
                 break;
             case "checkAnswer":
+                matchId = task.getInt("match_id");
+                userId = task.getInt("user_id");
+                questionId = task.getInt("question_id");
+                userAnswer = task.getInt("userAnswer");
+                Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+                Match match = Match.findById(matchId);
+                Question q = Question.findById(questionId);
+                int correctAnswer = q.getCorrectOption();
+                if ((!match.isOver()) && (userAnswer == correctAnswer)) {
+                    match.incrementScore(userId);  
+                }
+                Base.close();
+                App.answerQuest(user,userAnswer,correctAnswer,matchId,userId);
                 break;
-            case "checkGameStatus":
-                break;
-            default:
         }
     }
 

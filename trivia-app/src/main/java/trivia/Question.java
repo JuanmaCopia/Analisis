@@ -50,8 +50,7 @@ public class Question extends Model {
      * @post. the question's correctOption must be returned.
      */
     public int getCorrectOption() {
-        int resp = this.getInteger("correctOption");
-        return resp;
+        return this.getInteger("correctOption");
     }
 
     /**

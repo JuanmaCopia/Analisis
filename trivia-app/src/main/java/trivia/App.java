@@ -168,20 +168,57 @@ public class App {
      * @return A String that represents a json object containing .
      * @post. All database existing tables should be returned to all active users.
     */
-    public static void sendMatchQuestions(JSONArray questionsArray, int guest_id, int owner_id,int match_id) {
+    public static void sendMatchQuestions(JSONArray questionsArray, int ownerId , int guestId, int match_id) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        User owner = User.findById(ownerId);
+        User guest = User.findById(guestId);
+        String ownerName = owner.getUsername();
+        String guestName = guest.getUsername();
+        Base.close();
         userUsernameMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
-                    .put("task","gameQuestions")
-                    .put("questionsList", questionsArray)
+                    .put("task","startMatch")
+                    .put("questionsArray", questionsArray)
                     .put("match_id", match_id)
-                    .put("guest_id", guest_id)
-                    .put("owner_id", owner_id)
+                    .put("guest_id", guestId)
+                    .put("owner_id", ownerId)
+                    .put("guestName", guestName)
+                    .put("ownerName", ownerName)
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    /**
+     * This method inform .
+     * @param The session from the user that tried to create a new table.
+     * @pre. true.
+     * @return A String that represents a json object containing task identifier.
+     * @post. the message should be returned only to the user of the session.
+    */
+    public static void answerQuest(Session userSession, int userAnswer, int correctAnswer, int matchId, int userId) {
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+        Match m = Match.findById(matchId);
+        int userScore = m.getUserScore(userId);
+        int opponentScore = m.getOpponentScore(userId);
+        boolean matchOver = m.isOver();
+        Base.close();
+        try {
+            userSession.getRemote().sendString(String.valueOf(new JSONObject()
+                .put("task","showResult")
+                .put("isCorrect", userAnswer==correctAnswer)
+                .put("userAnswer",userAnswer)
+                .put("correctAnswer",correctAnswer)
+                .put("matchOver",matchOver)
+                .put("userScore",userScore)
+                .put("opponentScore",opponentScore)
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main( String[] args ) {
