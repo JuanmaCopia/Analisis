@@ -57,6 +57,9 @@ webSocket.onmessage = function (msg) {
                 }
             }
             break;
+            case "updateOnlineUsers":
+                displayAmountPlayers(data.amountUsers);
+            break;
         }
     }
     else {
@@ -91,6 +94,7 @@ webSocket.onclose = function () { alert("WebSocket connection closed") };
 */
 webSocket.onopen = function () {
     setUser();
+    displayUsername(user.username);
     setTable();
     sendUserInfo();
 };
