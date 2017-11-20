@@ -37,13 +37,10 @@ public class LobbyWebSocketHandler {
         UserInfo userInfo = App.userMap.get(user);
         int userId = userInfo.getId();
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        //List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
         List<Table> tablesList = Table.getUserTable(userId);
         if (!tablesList.isEmpty()) {
             Table table = tablesList.get(0);
             if (table.getOwnerId() == userId) {
-                //Base.close();
-                //App.sendDeletedTable(table.getTableId());
                 JSONObject deletedTable = table.toJson();
                 table.deleteCascadeShallow();
                 Base.close();
@@ -79,20 +76,15 @@ public class LobbyWebSocketHandler {
             case "createTable":
                 userId = task.getInt("owner_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-                //List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
                 List<Table> tablesList = Table.getUserTable(userId);
                 if (tablesList.isEmpty()) {
                     Table newTable = new Table();
                     newTable.initialize(userId);
-                    //Base.close();
-                    //App.sendCreatedTable(newTable);
                     jsonTable = newTable.toJson();
                     taskIdentifier = new String("displayCreatedTable");
                     App.sendTable(jsonTable,taskIdentifier);
-                    //Base.close();
                 }
                 else {
-                    //Base.close();
                     String errorMsg = new String("You are inside a table already.");
                     App.sendError(user,errorMsg);
                 }
@@ -100,7 +92,6 @@ public class LobbyWebSocketHandler {
                 break;
             case "deleteTable":
                 tableId = task.getInt("table_id");
-                //App.sendDeletedTable(tableId);
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
                 table = Table.findById(tableId);
                 JSONObject deletedTable = table.toJson();
@@ -115,8 +106,6 @@ public class LobbyWebSocketHandler {
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
                 table = Table.findById(tableId);
                 table.setGuestUser(guestId);
-                //Base.close();
-                //App.userJoinedTable(table);
                 jsonTable = table.toJson();
                 taskIdentifier = new String("userJoined");
                 App.sendTable(jsonTable,taskIdentifier);
@@ -129,10 +118,8 @@ public class LobbyWebSocketHandler {
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
                 table = Table.findById(tableId);
                 guestId = table.getGuestId();
-                //Base.close();
                 jsonTable = table.toJson();
                 table.deleteGuestUser();
-                //App.guestLeftTable(table2,guestId);
                 taskIdentifier = new String("userLeftTable");
                 App.sendTable(jsonTable,taskIdentifier);
                 tableArray = Table.getTables();
@@ -149,8 +136,6 @@ public class LobbyWebSocketHandler {
                 m.setMatchBeginning(ownerId,guestId);
                 matchId = m.getMId();
                 JSONArray questionsArray = Question.getMatchQuestions();
-                //Base.close();
-                //App.sendMatchQuestions(questionsArray,ownerId,guestId,matchId);
                 User owner = User.findById(ownerId);
                 User guest = User.findById(guestId);
                 String ownerName = owner.getUsername();

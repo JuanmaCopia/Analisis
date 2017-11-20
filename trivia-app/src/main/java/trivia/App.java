@@ -101,54 +101,6 @@ public class App {
     }
 
     /**
-     * This method send the created table to all users.
-     * @param a Table object.
-     * @pre. table != null.
-     * @return A String that represents a json object containing the new created table.
-     * @post. the table should be returned to all active users.
-    */
-    /*public static void sendCreatedTable(Table table) {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        JSONObject jsonTable = table.toJson();
-        Base.close();
-        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            try {
-                session.getRemote().sendString(String.valueOf(new JSONObject()
-                    .put("task","displayCreatedTable")
-                    .put("newTable", jsonTable)
-                ));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
-
-    /**
-     * This method send the deleted table to all users.
-     * @param an int that is the table id.
-     * @pre. the table to be deleted should exist in database.
-     * @return A String that represents a json object containing the deleted table.
-     * @post. the deleted table should be returned to all active users.
-    */
-    /*public static void sendDeletedTable(int tableId) {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        Table table = Table.findById(tableId);
-        JSONObject deletedTable = table.toJson();
-        table.deleteCascadeShallow();
-        Base.close();
-        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            try {
-                session.getRemote().sendString(String.valueOf(new JSONObject()
-                    .put("task","tableDeleted")
-                    .put("deletedTable",deletedTable)
-                ));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
-
-    /**
      * This method inform about a error.
      * @param The session from the user and a String containing the error messagge.
      * @pre. true.
@@ -165,53 +117,6 @@ public class App {
             e.printStackTrace();
         }
     }
-
-    /**
-     * This method sends the table with the guest user joined to all users.
-     * @param a Table object.
-     * @pre. table != null.
-     * @return A String that represents a json object containing the table with the guest user joined.
-     * @post. the table should be returned to all active users.
-    */
-    /*public static void userJoinedTable(Table table) {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        JSONObject jsonTable = table.toJson();
-        Base.close();
-        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            try {
-                session.getRemote().sendString(String.valueOf(new JSONObject()
-                    .put("task","userJoined")
-                    .put("table", jsonTable)
-                ));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
-
-    /**
-     * This method sends the table with the guest user gone to all users.
-     * @param a Table object.
-     * @pre. table != null.
-     * @return A String that represents a json object containing the table with the guest user gone.
-     * @post. the table should be returned to all active users.
-    */
-    /*public static void guestLeftTable(Table table, int guest_id) {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        JSONObject jsonTable = table.toJson();
-        Base.close();
-        userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
-            try {
-                session.getRemote().sendString(String.valueOf(new JSONObject()
-                    .put("task","userLeftTable")
-                    .put("table", jsonTable)
-                    .put("guest_id",guest_id)
-                ));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }*/
 
     /**
      * This method sends the match questions to every active users.
@@ -248,12 +153,6 @@ public class App {
      * @post. the message should be returned only to the user of the session.
     */
     public static void answerQuest(Session userSession, int userAnswer, int correctAnswer, boolean matchOver, int userScore, int opponentScore) {
-        /*Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        Match m = Match.findById(matchId);
-        int userScore = m.getUserScore(userId);
-        int opponentScore = m.getOpponentScore(userId);
-        boolean matchOver = m.isOver();
-        Base.close();*/
         try {
             userSession.getRemote().sendString(String.valueOf(new JSONObject()
                 .put("task","showResult")
