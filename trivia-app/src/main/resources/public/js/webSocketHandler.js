@@ -22,15 +22,15 @@ webSocket.onmessage = function (msg) {
                 displayAllTables(data.tableList);
             break;
             case "displayCreatedTable":
-                createTable(data.newTable);
-                displayTable(data.newTable);
+                createTable(data.table);
+                displayTable(data.table);
             break;
             case "error":
                 displayError(data.errorMsg);
             break;
             case "tableDeleted":
-                deleteTable(data.deletedTable);
-                removeTableFromView(data.deletedTable);
+                deleteTable(data.table);
+                removeTableFromView(data.table);
             break;
             case "userJoined":
                 if (data.table.guest_id == user.id) {
@@ -38,7 +38,10 @@ webSocket.onmessage = function (msg) {
                 }
             break;
             case "userLeftTable":
-                if (data.guest_id == user.id) {
+                console.log("ebtra a userLeftTable");
+                console.log(data.table.guest_id);
+                if (data.table.guest_id == user.id) {
+                    console.log("entraTambien al if");
                     sittedTable = null;
                 }
             break;
