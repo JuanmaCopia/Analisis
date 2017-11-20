@@ -2,21 +2,18 @@
 package trivia;
 
 import org.javalite.activejdbc.Base;
-import java.util.*;
 import static spark.Spark.*;
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONObject;
 import org.json.JSONArray;
-
-import static j2html.TagCreator.*;
 
 public class App {
 
@@ -144,7 +141,7 @@ public class App {
 
     /**
      * This method sends the question feedback.
-     * @param The session from the user that tried to create a new table, the answer from the user, 
+     * @param The session from the user that tried to create a new table, the answer from the user,
      * the correct answer, a boolean indication if the match is over, and the score of the user and the opponent.
      * @pre. true.
      * @return A String that represents a json object containing task identifier, a boolean that represents

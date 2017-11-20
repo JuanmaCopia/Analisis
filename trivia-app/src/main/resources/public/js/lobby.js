@@ -97,6 +97,7 @@ $("#createTable").click(function(){
 *     - id (optionNumber): the number of the answered option.
 */
 function sendAnswer(optionNumber) {
+    removeOnclickEventsOptions();
     var task = new Task("checkAnswer");
     task.match_id = match.id;
     task.user_id = user.id;
