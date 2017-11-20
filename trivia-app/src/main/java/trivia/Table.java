@@ -99,6 +99,15 @@ public class Table extends Model {
     }
 
     /**
+     * if the table is full return true, otherwise return false.
+     * @pre. this != null
+     * @post. true iff table is full, cc false.
+     */
+    public boolean isFull() {
+        return this.getBoolean("is_full") == true;
+    }
+
+    /**
      * This method sets the guest Id of the current Table object.
      * @pre. this != null
      * @param the Id of the Table's guest.
