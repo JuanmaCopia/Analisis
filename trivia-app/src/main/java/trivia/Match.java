@@ -12,8 +12,8 @@ public class Match extends Model {
         validatePresenceOf("user1Score").message("Please, provide the user1Score");
         validatePresenceOf("user2Score").message("Please, provide the user2Score");
         validatePresenceOf("state").message("Please, provide the state");
-        validateRange("user1Score", 0, 15).message("user1Score.outside.limits");
-        validateRange("user2Score", 0, 15).message("user2Score.outside.limits");
+        validateRange("user1Score", 0, 10).message("user1Score.outside.limits");
+        validateRange("user2Score", 0, 10).message("user2Score.outside.limits");
     }
 
     /**
