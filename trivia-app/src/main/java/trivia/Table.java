@@ -16,6 +16,12 @@ public class Table extends Model {
         validateWith(new UniquenessValidator("owner_id")).message("You are inside a Table as a owner already.");
     }
 
+    /**
+     * Returns a JSONObject contaiing all the data of the current Table object.
+     * @pre. this != null
+     * @return a JSONObject contaiing all the data of the current Table object.
+     * @post a JSONObject contaiing all the data of the current Table object, must be returned.
+    */
     public JSONObject toJson() {
         int guestId;
         JSONObject result = new JSONObject();

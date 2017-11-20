@@ -64,6 +64,23 @@ public class App {
     }
 
     /**
+     * This method send all tables to the user of the session.
+     * @pre. true.
+     * @return A String that represents a json object containing all the tables and a task identifier.
+     * @post. All database existing tables should be returned to the user of the session.
+    */
+    public static void refreshTablesForUser(Session userSession, JSONArray tableArray) {
+        try {
+            userSession.getRemote().sendString(String.valueOf(new JSONObject()
+                .put("task","refreshTables")
+                .put("tableList", tableArray)
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * This method sends the jsonTable to all users.
      * @param a JSONObject and a String representing the name of the task.
      * @pre. jsonTable != null, taskIdentifier != null.
@@ -132,10 +149,10 @@ public class App {
     }*/
 
     /**
-     * This method inform about a error on creating a new table.
-     * @param The session from the user that tried to create a new table.
+     * This method inform about a error.
+     * @param The session from the user and a String containing the error messagge.
      * @pre. true.
-     * @return A String that represents a json object containing task identifier.
+     * @return A String that represents a json object containing task identifier and the error messagge.
      * @post. the message should be returned only to the user of the session.
     */
     public static void sendError(Session userSession, String errorMsg) {
