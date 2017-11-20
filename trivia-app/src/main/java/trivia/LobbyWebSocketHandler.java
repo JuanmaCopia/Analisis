@@ -49,6 +49,7 @@ public class LobbyWebSocketHandler {
             }
             else {
                 table.deleteGuestUser();
+                App.refreshTables(Table.getTables());
                 Base.close();
             }
         }
