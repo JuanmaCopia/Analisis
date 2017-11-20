@@ -24,8 +24,9 @@ public class LobbyWebSocketHandler {
         App.nextUserNumber++;
         App.updateOnlineUsers();
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        App.refreshTables();
+        JSONArray tableArray = Table.getTables();
         Base.close();
+        App.refreshTables(tableArray);
     }
 
     /**
@@ -71,6 +72,9 @@ public class LobbyWebSocketHandler {
         JSONObject task = new JSONObject(message);
         int userId,tableId,ownerId,guestId,matchId,questionId,userAnswer;
         Table table;
+        String taskIdentifier;
+        JSONObject jsonTable;
+        JSONArray tableArray;
         String description = new String(task.getString("description"));
         switch (description) {
             case "createTable":
@@ -83,14 +87,15 @@ public class LobbyWebSocketHandler {
                     newTable.initialize(userId);
                     //Base.close();
                     //App.sendCreatedTable(newTable);
-                    JSONObject jsonTable = newTable.toJson();
-                    String taskIdentifier = new String("displayCreatedTable");
+                    jsonTable = newTable.toJson();
+                    taskIdentifier = new String("displayCreatedTable");
                     App.sendTable(jsonTable,taskIdentifier);
                     //Base.close();
                 }
                 else {
                     //Base.close();
-                    App.tableCreationError(user);
+                    String errorMsg = new String("You are inside a table already.");
+                    App.sendError(user,errorMsg);
                 }
                 Base.close();
                 break;
@@ -98,11 +103,11 @@ public class LobbyWebSocketHandler {
                 tableId = task.getInt("table_id");
                 //App.sendDeletedTable(tableId);
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-                Table table = Table.findById(tableId);
+                table = Table.findById(tableId);
                 JSONObject deletedTable = table.toJson();
                 table.deleteCascadeShallow();
                 Base.close();
-                String taskIdentifier = new String("tableDeleted");
+                taskIdentifier = new String("tableDeleted");
                 App.sendTable(deletedTable,taskIdentifier);
                 break;
             case "joinTable":
@@ -113,11 +118,12 @@ public class LobbyWebSocketHandler {
                 table.setGuestUser(guestId);
                 //Base.close();
                 //App.userJoinedTable(table);
-                JSONObject jsonTable = table.toJson();
-                String taskIdentifier = new String("userJoined");
+                jsonTable = table.toJson();
+                taskIdentifier = new String("userJoined");
                 App.sendTable(jsonTable,taskIdentifier);
-                App.refreshTables();
+                tableArray = Table.getTables();
                 Base.close();
+                App.refreshTables(tableArray);
                 break;
             case "guestLeft":
                 tableId = task.getInt("table_id");
@@ -127,11 +133,12 @@ public class LobbyWebSocketHandler {
                 //Base.close();
                 table2.deleteGuestUser();
                 //App.guestLeftTable(table2,guestId);
-                JSONObject jsonTable = table2.toJson();
-                String taskIdentifier = new String("userLeftTable");
+                jsonTable = table2.toJson();
+                taskIdentifier = new String("userLeftTable");
                 App.sendTable(jsonTable,taskIdentifier);
-                App.refreshTables();
+                tableArray = Table.getTables();
                 Base.close();
+                App.refreshTables(tableArray);
                 break;
             case "startMatch":
                 tableId = task.getInt("table_id");

@@ -50,8 +50,7 @@ public class App {
      * @return A String that represents a json object containing all the tables and a task identifier.
      * @post. All database existing tables should be returned to all active users.
     */
-    public static void refreshTables() {
-        JSONArray tableArray = Table.getTables();
+    public static void refreshTables(JSONArray tableArray) {
         userMap.keySet().stream().filter(Session::isOpen).forEach(session -> {
             try {
                 session.getRemote().sendString(String.valueOf(new JSONObject()
@@ -139,10 +138,11 @@ public class App {
      * @return A String that represents a json object containing task identifier.
      * @post. the message should be returned only to the user of the session.
     */
-    public static void tableCreationError(Session userSession) {
+    public static void sendError(Session userSession, String errorMsg) {
         try {
             userSession.getRemote().sendString(String.valueOf(new JSONObject()
-                .put("task","creationError")
+                .put("task","error")
+                .put("errorMsg",errorMsg)
             ));
         } catch (Exception e) {
             e.printStackTrace();
