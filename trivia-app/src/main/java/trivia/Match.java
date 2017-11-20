@@ -169,7 +169,7 @@ public class Match extends Model {
         if (userId == this.getInteger("user1Id")) {
             this.set("user1Score",this.getInteger("user1Score") + 1);
             this.saveIt();
-            if (this.getInteger("user1Score") >= 3) {
+            if (this.getInteger("user1Score") >= 10) {
                 this.set("winnerId",this.getInteger("user1Id"));
                 this.set("state","Game_Over");
                 this.saveIt();
@@ -178,7 +178,7 @@ public class Match extends Model {
         else {
             this.set("user2Score",this.getInteger("user2Score") + 1);
             this.saveIt();
-            if (this.getInteger("user2Score") >= 3) {
+            if (this.getInteger("user2Score") >= 10) {
                 this.set("winnerId",this.getInteger("user2Id"));
                 this.set("state","Game_Over");
                 this.saveIt();

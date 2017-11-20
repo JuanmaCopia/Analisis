@@ -141,6 +141,16 @@ function removeTableFromView(table) {
 };
 
 /*
+* Removes onclick events from all the options.
+*/
+function removeOnclickEventsOptions() {
+    $('#option1').prop('onclick',null).off('click');
+    $('#option2').prop('onclick',null).off('click');
+    $('#option3').prop('onclick',null).off('click');
+    $('#option4').prop('onclick',null).off('click');
+};
+
+/*
 * Generates an html table.
 * parameters:
 *     - table (table): the table to be formatted as html.
