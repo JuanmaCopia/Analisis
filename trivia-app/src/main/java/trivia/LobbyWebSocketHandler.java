@@ -26,7 +26,7 @@ public class LobbyWebSocketHandler {
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         JSONArray tableArray = Table.getTables();
         Base.close();
-        App.refreshTables(tableArray);
+        App.refreshTablesForUser(user,tableArray);
     }
 
     /**
@@ -128,12 +128,12 @@ public class LobbyWebSocketHandler {
             case "guestLeft":
                 tableId = task.getInt("table_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-                Table table2 = Table.findById(tableId);
-                guestId = table2.getGuestId();
+                table = Table.findById(tableId);
+                guestId = table.getGuestId();
                 //Base.close();
-                table2.deleteGuestUser();
+                jsonTable = table.toJson();
+                table.deleteGuestUser();
                 //App.guestLeftTable(table2,guestId);
-                jsonTable = table2.toJson();
                 taskIdentifier = new String("userLeftTable");
                 App.sendTable(jsonTable,taskIdentifier);
                 tableArray = Table.getTables();

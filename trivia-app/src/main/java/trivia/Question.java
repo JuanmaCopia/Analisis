@@ -78,9 +78,10 @@ public class Question extends Model {
     }
 
     /**
-     *
-     *
-     *
+     * Returns a JSONObject contaiing all the data of the current Question object.
+     * @pre. this != null
+     * @return a JSONObject contaiing all the data of the current Question object.
+     * @post a JSONObject contaiing all the data of the current Question object, must be returned.
     */
     public JSONObject toJson() {
         JSONObject result = new JSONObject();
