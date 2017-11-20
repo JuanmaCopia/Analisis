@@ -38,10 +38,7 @@ webSocket.onmessage = function (msg) {
                 }
             break;
             case "userLeftTable":
-                console.log("ebtra a userLeftTable");
-                console.log(data.table.guest_id);
                 if (data.table.guest_id == user.id) {
-                    console.log("entraTambien al if");
                     sittedTable = null;
                 }
             break;

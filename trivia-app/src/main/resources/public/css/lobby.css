@@ -132,8 +132,8 @@ body {
 
 .chatWindow {
     width: 100%;
-    min-height: 55vh;
-    max-height: 55vh;
+    min-height: 50vh;
+    max-height: 50vh;
     background-color: white;
     overflow-y: scroll;
 }
