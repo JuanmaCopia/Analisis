@@ -52,13 +52,12 @@ public class LobbyWebSocketHandler {
             }
             else {
                 table.deleteGuestUser();
-                //Base.close();
+                Base.close();
             }
         }
-        /*else {
+        else {
             Base.close();
-        }*/
-        Base.close();
+        }
         App.userMap.remove(user);
         App.nextUserNumber--;
         App.updateOnlineUsers();
