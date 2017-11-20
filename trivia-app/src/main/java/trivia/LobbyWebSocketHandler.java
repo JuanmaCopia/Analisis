@@ -21,7 +21,11 @@ public class LobbyWebSocketHandler {
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
         App.userMap.put(user, new UserInfo());
+        App.nextUserNumber++;
+        App.updateOnlineUsers();
+        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         App.refreshTables();
+        Base.close();
     }
 
     /**
@@ -32,23 +36,33 @@ public class LobbyWebSocketHandler {
         UserInfo userInfo = App.userMap.get(user);
         int userId = userInfo.getId();
         Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-        List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+        //List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+        List<Table> tablesList = Table.getUserTable(userId);
         if (!tablesList.isEmpty()) {
             Table table = tablesList.get(0);
             if (table.getOwnerId() == userId) {
+                //Base.close();
+                //App.sendDeletedTable(table.getTableId());
+                JSONObject deletedTable = table.toJson();
+                table.deleteCascadeShallow();
                 Base.close();
-                App.sendDeletedTable(table.getTableId());
+                String taskIdentifier = new String("tableDeleted");
+                App.sendTable(deletedTable,taskIdentifier);
             }
             else {
-                Base.close();
                 table.deleteGuestUser();
+                //Base.close();
             }
         }
-        else {
+        /*else {
             Base.close();
-        }
+        }*/
+        Base.close();
         App.userMap.remove(user);
+        App.nextUserNumber--;
+        App.updateOnlineUsers();
     }
+
     /**
      * Actions to perform when a message from the client arrives.
     */
@@ -62,21 +76,34 @@ public class LobbyWebSocketHandler {
             case "createTable":
                 userId = task.getInt("owner_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
-                List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+                //List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+                List<Table> tablesList = Table.getUserTable(userId);
                 if (tablesList.isEmpty()) {
                     Table newTable = new Table();
                     newTable.initialize(userId);
-                    Base.close();
-                    App.sendCreatedTable(newTable);
+                    //Base.close();
+                    //App.sendCreatedTable(newTable);
+                    JSONObject jsonTable = newTable.toJson();
+                    String taskIdentifier = new String("displayCreatedTable");
+                    App.sendTable(jsonTable,taskIdentifier);
+                    //Base.close();
                 }
                 else {
-                    Base.close();
+                    //Base.close();
                     App.tableCreationError(user);
                 }
+                Base.close();
                 break;
             case "deleteTable":
                 tableId = task.getInt("table_id");
-                App.sendDeletedTable(tableId);
+                //App.sendDeletedTable(tableId);
+                Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
+                Table table = Table.findById(tableId);
+                JSONObject deletedTable = table.toJson();
+                table.deleteCascadeShallow();
+                Base.close();
+                String taskIdentifier = new String("tableDeleted");
+                App.sendTable(deletedTable,taskIdentifier);
                 break;
             case "joinTable":
                 guestId = task.getInt("guest_id");
@@ -84,19 +111,27 @@ public class LobbyWebSocketHandler {
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
                 table = Table.findById(tableId);
                 table.setGuestUser(guestId);
-                Base.close();
-                App.userJoinedTable(table);
+                //Base.close();
+                //App.userJoinedTable(table);
+                JSONObject jsonTable = table.toJson();
+                String taskIdentifier = new String("userJoined");
+                App.sendTable(jsonTable,taskIdentifier);
                 App.refreshTables();
+                Base.close();
                 break;
             case "guestLeft":
                 tableId = task.getInt("table_id");
                 Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
                 Table table2 = Table.findById(tableId);
                 guestId = table2.getGuestId();
-                Base.close();
+                //Base.close();
                 table2.deleteGuestUser();
-                App.guestLeftTable(table2,guestId);
+                //App.guestLeftTable(table2,guestId);
+                JSONObject jsonTable = table2.toJson();
+                String taskIdentifier = new String("userLeftTable");
+                App.sendTable(jsonTable,taskIdentifier);
                 App.refreshTables();
+                Base.close();
                 break;
             case "startMatch":
                 tableId = task.getInt("table_id");
@@ -108,8 +143,14 @@ public class LobbyWebSocketHandler {
                 m.setMatchBeginning(ownerId,guestId);
                 matchId = m.getMId();
                 JSONArray questionsArray = Question.getMatchQuestions();
+                //Base.close();
+                //App.sendMatchQuestions(questionsArray,ownerId,guestId,matchId);
+                User owner = User.findById(ownerId);
+                User guest = User.findById(guestId);
+                String ownerName = owner.getUsername();
+                String guestName = guest.getUsername();
                 Base.close();
-                App.sendMatchQuestions(questionsArray,ownerId,guestId,matchId);
+                App.sendMatchQuestions(questionsArray,ownerId,guestId,matchId,guestName,ownerName);
                 break;
             case "checkAnswer":
                 matchId = task.getInt("match_id");
@@ -123,8 +164,11 @@ public class LobbyWebSocketHandler {
                 if (!match.isOver() && (userAnswer == correctAnswer)) {
                     match.incrementScore(userId);
                 }
+                int userScore = match.getUserScore(userId);
+                int opponentScore = match.getOpponentScore(userId);
+                boolean matchOver = match.isOver();
                 Base.close();
-                App.answerQuest(user,userAnswer,correctAnswer,matchId,userId);
+                App.answerQuest(user,userAnswer,correctAnswer,matchOver,userScore,opponentScore);
                 break;
             case "setUser":
                 App.userMap.put(user, new UserInfo(task.getInt("user_id"),task.getString("username")));

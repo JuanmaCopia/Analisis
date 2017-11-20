@@ -6,6 +6,7 @@ import org.javalite.activejdbc.Base;
 import org.javalite.activejdbc.validation.UniquenessValidator;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 public class Table extends Model {
 
@@ -80,16 +81,45 @@ public class Table extends Model {
         this.saveIt();
     }
 
+    /**
+     * this method deletes the guest user from the current object.
+     * @pre. this != null
+     * @post. the guest_id of the table must be deleted.
+     */
     public void deleteGuestUser() {
-        Base.open("com.mysql.jdbc.Driver", "jdbc:mysql://localhost/trivia", "root", "root");
         this.set("guest_id",null);
         this.set("is_full",false);
         this.saveIt();
-        Base.close();
     }
 
     public void deleteTable() {
         this.deleteCascade();
+    }
+
+    /**
+     * returns the tables where the user is currently at.
+     * @param userId
+     * @return a list with the tables the user is currently at,.
+     * @post. a list with the tables the user is currently at, must be returned.
+     */
+    public static List<Table> getUserTable(int userId) {
+        List<Table> tablesList = Table.findBySQL("SELECT * FROM tables WHERE owner_id = "+userId+" or guest_id = "+userId);
+        return tablesList;
+    }
+
+    /**
+     * returns a json array with all the tables.
+     * @pre true
+     * @return a json array with all the tables.
+     * @post. a json array with all the tables must be returned.
+     */
+    public static JSONArray getTables() {
+        JSONArray tableArray = new JSONArray();
+        List<Table> tablesList = Table.findAll();
+        for(Table t: tablesList){
+            tableArray.put(t.toJson());
+        }
+        return tableArray;
     }
 
 }
