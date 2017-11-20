@@ -45,11 +45,22 @@ public class Table extends Model {
         return result;
     }
 
+    /**
+     * returns the id of the current Table object.
+     * @pre. this != null
+     * @return an int value that is the id of this Table.
+     * @post. the Table id must be returned.
+     */
     public int getTableId() {
         return this.getInteger("id");
     }
 
-
+    /**
+     * This method initilizes the corresponding data of the current Table object.
+     * @pre. this != null
+     * @param the Id of the Table's owner
+     * @post. the corresponding data of the current Table object must be initialized.
+     */
     public void initialize(int ownerId) {
         this.set("owner_id",ownerId);
         this.set("is_full",false);
@@ -76,11 +87,23 @@ public class Table extends Model {
         return this.getInteger("guest_id");
     }
 
+    /**
+     * This method sets the owner Id of the current Table object.
+     * @pre. this != null
+     * @param the Id of the Table's owner
+     * @post. the owner_id of the current Table object must be ownerId.
+     */
     public void setOwnerUser(int ownerId) {
         this.set("owner_id",ownerId);
         this.saveIt();
     }
 
+    /**
+     * This method sets the guest Id of the current Table object.
+     * @pre. this != null
+     * @param the Id of the Table's guest.
+     * @post. the guest_id of the current Table object must be guestId, and the Table must be full.
+     */
     public void setGuestUser(int guestId) {
         this.set("guest_id",guestId);
         this.set("is_full",true);
@@ -96,10 +119,6 @@ public class Table extends Model {
         this.set("guest_id",null);
         this.set("is_full",false);
         this.saveIt();
-    }
-
-    public void deleteTable() {
-        this.deleteCascade();
     }
 
     /**

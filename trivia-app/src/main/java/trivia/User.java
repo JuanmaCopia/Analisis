@@ -19,7 +19,12 @@ public class User extends Model {
         validateWith(new UniquenessValidator("email")).message("This email is already taken.");
     }
 
-
+    /**
+     * Returns a JSONObject contaiing all the data of the current User object.
+     * @pre. this != null
+     * @return a JSONObject contaiing all the data of the current User object.
+     * @post a JSONObject contaiing all the data of the current User object, must be returned.
+    */
     public JSONObject toJson() {
         JSONObject result = new JSONObject();
         result.put("user_id",this.getInteger("id"));
@@ -30,7 +35,7 @@ public class User extends Model {
     /**
      * returns the id of the "this" user.
      * @pre. this != null
-     * @return an int value that is de id of this user.
+     * @return an int value that is the id of this user.
      * @post. the user id must be returned,
      */
     public Integer getUId() {
