@@ -31,6 +31,25 @@ function displayFeedback(isCorrect,userAnswer,correctAnswer) {
 };
 
 /*
+* Shows the amount of online users on the lobby.
+* parameters:
+*     - amount (int): number of online users.
+*/
+function displayAmountPlayers(amount) {
+    $("#numberPlayers").html(amount);
+};
+
+/*
+* displays this user username.
+* parameters:
+*     - username (string): this user username.
+*/
+function displayUsername(username) {
+    $("#username").html(username+'!');
+};
+
+
+/*
 * Shows the match statistics of both players.
 * parameters:
 *     - userScore (int): amount of correct answers of this user.
