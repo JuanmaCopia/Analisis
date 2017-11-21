@@ -5,6 +5,8 @@ import java.util.*;
 import org.javalite.activejdbc.Model;
 import org.javalite.activejdbc.validation.UniquenessValidator;
 
+import org.json.JSONObject;
+
 public class User extends Model {
 
     //Bloque estatico para poder utilizar los metodos de validacion correspondientes en las clases de Testing.
@@ -18,9 +20,22 @@ public class User extends Model {
     }
 
     /**
+     * Returns a JSONObject contaiing all the data of the current User object.
+     * @pre. this != null
+     * @return a JSONObject contaiing all the data of the current User object.
+     * @post a JSONObject contaiing all the data of the current User object, must be returned.
+    */
+    public JSONObject toJson() {
+        JSONObject result = new JSONObject();
+        result.put("user_id",this.getInteger("id"));
+        result.put("username",this.getString("username"));
+        return result;
+    }
+
+    /**
      * returns the id of the "this" user.
      * @pre. this != null
-     * @return an int value that is de id of this user.
+     * @return an int value that is the id of this user.
      * @post. the user id must be returned,
      */
     public Integer getUId() {
