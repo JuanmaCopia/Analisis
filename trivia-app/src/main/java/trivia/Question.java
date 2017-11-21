@@ -105,7 +105,7 @@ public class Question extends Model {
      */
     public static JSONArray getMatchQuestions() {
         JSONArray questionsArray = new JSONArray();
-        List<Question> questionsList = Question.findBySQL("SELECT DISTINCT * FROM questions ORDER BY RAND() LIMIT 10");
+        List<Question> questionsList = Question.findBySQL("SELECT DISTINCT * FROM questions ORDER BY RAND() LIMIT 30");
         for(Question q: questionsList){
             questionsArray.put(q.toJson());
         }

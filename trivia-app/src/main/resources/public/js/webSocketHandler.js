@@ -67,7 +67,7 @@ webSocket.onmessage = function (msg) {
             match.currentQuestion++;
             if (!data.matchOver) {
                 displayFeedback(data.isCorrect,data.userAnswer,data.correctAnswer);
-                if (match.currentQuestion == 10) {
+                if (match.currentQuestion == 30) {
                     match.currentQuestion = 0;
                 }
                 var nextQuestion = match.questionsArray[match.currentQuestion];
