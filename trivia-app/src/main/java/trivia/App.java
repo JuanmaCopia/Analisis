@@ -221,32 +221,9 @@ public class App {
          * @post.  The welcome view is returned iff username and email are not already in the database,
          * if they are, then the sign up view must be returned showing the error.
          */
-        post("/sign_up_check", (request, response) -> {
-            Map model = new HashMap();
-            String username = request.queryParams("username");
-            List<User> p = User.where("username = '" + username + "'");
-            if (p.size()!=0) {
-                model.put("error", "El usuario " + username + " ya existe.");
-                return new ModelAndView(model, "./views/sign_up.mustache");
-            }
-            String password = request.queryParams("password");
-            String passwordRep = request.queryParams("passwordRep");
-            if (!password.equals(passwordRep)) {
-                model.put("error", "Las contraseñas ingresadas no coinciden.");
-                return new ModelAndView(model, "./views/sign_up.mustache");
-            }
-            String email = request.queryParams("email");
-            p = User.where("email = '" + email + "'");
-            if (p.size()!=0) {
-                model.put("error", "Ya existe un usuario registrado con este e-mail.");
-                return new ModelAndView(model, "./views/sign_up.mustache");
-            }
-            User u = new User();
-            u.setSignUpData(username, password, email);
-            model.put("username",request.queryParams("username"));
-            return new ModelAndView(model, "./views/sign_up_check.mustache");
-        }, new MustacheTemplateEngine());
+        post("/sign_up_check",UserController::checkSignUp, new MustacheTemplateEngine());
 
+        
         /**
          * This post method creates the session and returns the game's menu view if the username and password exists,
          * otherwise the sign in view is returned informing the error.
